@@ -49,7 +49,11 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Default contents: read is least privilege | Confirmed | [G7] | T1 | Rule 7 reason |
 | A job whose needed job fails is skipped unless it uses always() | Confirmed | [G10] | T1 | Rule 10 reason; ci-ok uses always() |
 | cargo fmt --check and cargo fmt --all --check behave the same | Not assumed: --all is the documented workspace-wide form; aligned with the local script | [L1] | T1 | gates job uses --all |
-| x86_64 Linux links with LLD by default | Confirmed from Rust 1.90 | [R12] | T1 | Shared .cargo/config.toml linker bullet (parity) |
+| x86_64 Linux links with LLD by default | Confirmed from Rust 1.90; rustup ships rust-lld, so nothing needs installing | [R12] [R17] | T1 | Shared .cargo/config.toml linker bullet (parity) |
+| CI should use mold on Linux native jobs | Replaced for parity: the local script cannot assume mold, and x86_64 already links with rust-lld from 1.90. The workflow sets no linker and reads linker settings from the shared config | [R12] [R17] | T1 | build_cost linker bullet |
+| clang and lld can be installed on GitHub Linux runners | Confirmed: Linux runners have passwordless sudo | [G11] | T1 | sudo apt-get install -y clang lld on jobs that need them |
+| Linker settings in .cargo/config.toml are safe for zigbuild triples | Not needed: cargo zigbuild uses zig as the linker, so zigbuild triples get no linker settings | [R16] | T1 | Linker bullet limited to native triples |
+| Use a workflow dependency lockfile instead of SHA pins | Declined: the lockfile is in public preview and subject to change; GitHub recommends SHA pins where no lockfile is used | [G7] [G12] | T1 | Rule 8: no lockfile; stop if one exists |
 | macos-14 runner is arm64 | Confirmed | [G11] | T1 | none (example value) |
 | actionlint is more than a syntax check | Confirmed: it type-checks expressions | [R15] | T1 | none |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
@@ -69,5 +73,5 @@ Process gaps:
 
 - Early revisions used search snippets of [A1]. [A1] and [A2] were read in
   full later.
-- [G7] now ranks workflow dependency lockfiles above SHA pinning. The
-  recipe still pins SHAs, which [G7] recommends when no lockfile is used.
+- Revisit rule 8 when workflow dependency lockfiles [G12] leave public
+  preview.

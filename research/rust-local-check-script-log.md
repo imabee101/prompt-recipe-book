@@ -27,7 +27,9 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | cargo publish works with a hakari workspace-hack crate | Corrected: needs the empty crate on crates.io, created by cargo-hakari 0.9.9 or newer | [R8] | T1 | Version minimum and setup step 6 |
 | Nightly options such as workspace feature unification speed up builds | True but nightly-only when read | [R3] | T1 | Stable Rust only |
 | Reduced debug info and no debug info for dependencies speed up builds | Confirmed | [R3] | T1 | .cargo/config.toml profile settings |
-| x86_64 Linux needs a linker override | Corrected: no override from Rust 1.90, which made LLD the default there; older pinned toolchains still need it | [R3] [R12] | T1 | Linker settings for other Linux triples, plus x86_64 when the toolchain is older than 1.90 |
+| x86_64 Linux needs a linker override | Corrected: no override from Rust 1.90, which made LLD the default there; older pinned toolchains still need it | [R3] [R12] [R17] | T1 | Linker settings for other Linux triples, plus x86_64 when the toolchain is older than 1.90 |
+| Linker settings in .cargo/config.toml are safe for zigbuild triples | Not needed: cargo zigbuild uses zig as the linker, so only triples built with cargo get linker settings | [R16] | T1 | Linker bullet limited to method cargo |
+| clang and lld are present wherever linker settings apply | Not assumed: preflight now checks for them | none (design) | n/a | Preflight in fast and gate modes |
 | Nextest stops at the first failure by default; max-fail and terminate are configurable | Confirmed | [R4] | T1 | fast and gate profiles |
 | Nextest runs doctests | Corrected: it does not; the official site says to run cargo test --doc | [R5] [R11] | T1 | Separate cargo test --doc stage in gate |
 | The IDE should use its own target directory | Confirmed on the official site | [R6] [R13] | T1 | Closing usage sentence |
@@ -53,8 +55,6 @@ Sources with limits:
 - [R3] listed workspace feature unification as nightly-only when read.
   Stable status was not confirmed, so the recipe uses cargo-hakari instead.
 - [R7] is forum discussion. [S5] and [S6] are secondary sources.
-- The clang plus lld linker settings were not tested together with
-  cargo zigbuild on the same triple.
 
 Process gaps:
 

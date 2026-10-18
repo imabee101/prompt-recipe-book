@@ -67,7 +67,11 @@ rule and its reason.
    any other job cannot write to the repository.
 8. Pin every third-party action to a full commit SHA with a
    version comment. Checkout uses persist-credentials: false.
-   Reason: supply-chain safety.
+   Create no workflow dependency lockfile
+   (.github/workflows/actions.lock). Reason: supply-chain safety;
+   the lockfile is in public preview and subject to change, and
+   GitHub recommends SHA pins where no lockfile is used. If the
+   repository already has that lockfile, stop and report it.
 9. Every cargo command uses --locked. Reason: CI must fail if
    Cargo.lock is out of date.
 10. Cheap jobs run first. Each expensive job lists the cheaper
@@ -144,10 +148,12 @@ shared with the local script scripts/check.
 .cargo/config.toml
 - [profile.dev]: debug = "line-tables-only"
 - [profile.dev.package."*"]: debug = false
-- Linker settings only for non-x86_64 Linux triples in TARGETS:
-  linker = "clang" with rustflags ["-C", "link-arg=-fuse-ld=lld"].
-  If rust-toolchain.toml pins a release older than Rust 1.90, add
-  the same settings for x86_64-unknown-linux-gnu.
+- Linker settings only for Linux triples other than
+  x86_64-unknown-linux-gnu whose method is native: linker = "clang"
+  with rustflags ["-C", "link-arg=-fuse-ld=lld"]. Triples built
+  with cargo zigbuild get no linker settings, because zig is their
+  linker. If rust-toolchain.toml pins a release older than Rust
+  1.90, add the same settings for x86_64-unknown-linux-gnu.
 
 .config/nextest.toml (requires cargo-nextest 0.9.89 or newer)
 - [profile.fast]: fail-fast = { max-fail = 1, terminate =
@@ -326,7 +332,11 @@ Create these jobs in order.
 - Never set RUSTFLAGS in the workflow. Reason: it replaces
   rustflags from .cargo/config.toml. Pass -D warnings to clippy
   after --.
-- Use mold on Linux native jobs.
+- Set no linker in the workflow. From Rust 1.90,
+  x86_64-unknown-linux-gnu links with rust-lld, which rustup ships;
+  every other linker setting comes from .cargo/config.toml. On a
+  native Linux job whose triple has linker settings there, run
+  sudo apt-get install -y clang lld before building.
 - Install cargo-nextest, cargo-deny, cargo-hakari, and
   cargo-zigbuild with taiki-e/install-action. Never use
   cargo install.

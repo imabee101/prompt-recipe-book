@@ -5,7 +5,7 @@ target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
 last_verified: 2026-10-18
-requires: shell with git, jq, cargo, cargo-nextest, cargo-hakari, shellcheck
+requires: shell with git, jq, cargo, cargo-nextest, cargo-hakari, shellcheck (clang and lld for linker settings)
 pairs_with: rust-ci-github-actions
 ---
 
@@ -193,9 +193,11 @@ the user.
 1. fast (default; run as scripts/check or scripts/check fast)
    a. preflight (target under 1 second): confirm git, jq,
       cargo-hakari (0.9.9 or newer), and cargo-nextest (0.9.89 or
-      newer) exist, confirm .config/hakari.toml exists, validate
-      Cargo.lock with cargo metadata --locked, run change
-      detection and the skip rule.
+      newer) exist, plus clang and lld when .cargo/config.toml sets
+      linker settings for a triple this run builds; confirm
+      .config/hakari.toml exists, validate Cargo.lock with
+      cargo metadata --locked, run change detection and the skip
+      rule.
    b. In the background: cargo fmt -p <affected> --check, plus the
       hakari lane when its trigger applies.
    c. clippy: cargo clippy -p <affected> --all-targets --locked
@@ -255,13 +257,15 @@ the user.
 .cargo/config.toml
 - [profile.dev]: debug = "line-tables-only"
 - [profile.dev.package."*"]: debug = false
-- Add linker settings only for non-x86_64 Linux triples that
-  appear in TARGETS: linker = "clang" with
-  rustflags ["-C", "link-arg=-fuse-ld=lld"]. Reason: since Rust
-  1.90, x86_64-unknown-linux-gnu links with LLD by default, while
-  other Linux targets use the slower system linker. If
-  rust-toolchain.toml pins a release older than 1.90, add the same
-  settings for x86_64-unknown-linux-gnu.
+- Linker settings only for Linux triples other than
+  x86_64-unknown-linux-gnu whose method is cargo: linker = "clang"
+  with rustflags ["-C", "link-arg=-fuse-ld=lld"]. Triples built
+  with cargo zigbuild get no linker settings, because zig is their
+  linker. If rust-toolchain.toml pins a release older than Rust
+  1.90, add the same settings for x86_64-unknown-linux-gnu.
+  Reason: from Rust 1.90, x86_64-unknown-linux-gnu links with
+  rust-lld, which rustup ships, while other Linux targets use the
+  slower system linker.
 
 .config/nextest.toml
 - [profile.fast]: fail-fast = { max-fail = 1, terminate =
