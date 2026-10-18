@@ -142,6 +142,17 @@ live in each log's "Known gaps").
   cargo fmt --help lists -p, --all, and --check; in a scratch workspace
   cargo fmt -p a --check exited 1 with a diff, and
   cargo clippy --message-format short printed file:line:col messages.
+- [L2] T1, local test on 2026-10-18 (x86_64 Ubuntu 24.04, rustc 1.97.0,
+  clang and Ubuntu LLD 18.1.3, cargo-zigbuild with zig 0.17.0, QEMU).
+  Hello-world release builds, linker read from the ELF .comment section:
+  x86_64 with no settings linked with rust-lld (LLD 22.1.6); with
+  -C linker-features=-lld it fell back to GNU ld; x86_64 with
+  linker = "clang" and -fuse-ld=lld linked with LLD 18.1.3. aarch64
+  cross-build with linker = "clang" and -fuse-ld=lld failed (objects
+  "incompatible with elf64-x86-64"); adding -C link-arg=--target=
+  aarch64-unknown-linux-gnu linked with LLD and ran under qemu-aarch64.
+  cargo zigbuild for aarch64 linked with zig's LLD 22.1.8 and ran, both
+  without linker settings and with the clang settings present.
 
 ## Commit conventions and shell tools
 

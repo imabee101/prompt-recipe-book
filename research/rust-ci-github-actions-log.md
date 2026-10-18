@@ -53,6 +53,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | CI should use mold on Linux native jobs | Replaced for parity: the local script cannot assume mold, and x86_64 already links with rust-lld from 1.90. The workflow sets no linker and reads linker settings from the shared config | [R12] [R17] | T1 | build_cost linker bullet |
 | clang and lld can be installed on GitHub Linux runners | Confirmed: Linux runners have passwordless sudo | [G11] | T1 | sudo apt-get install -y clang lld on jobs that need them |
 | Linker settings in .cargo/config.toml are safe for zigbuild triples | Not needed: cargo zigbuild uses zig as the linker, so zigbuild triples get no linker settings | [R16] | T1 | Linker bullet limited to native triples |
+| linker = "clang" with -fuse-ld=lld links any Linux triple | Corrected by test: rustc does not pass the target to clang; -C link-arg=--target=<triple> is required for a cross-link. zigbuild ignores these settings and links with zig | [L2] | T1 | Shared linker bullet adds --target (parity) |
 | Use a workflow dependency lockfile instead of SHA pins | Declined: the lockfile is in public preview and subject to change; GitHub recommends SHA pins where no lockfile is used | [G7] [G12] | T1 | Rule 8: no lockfile; stop if one exists |
 | macos-14 runner is arm64 | Confirmed | [G11] | T1 | none (example value) |
 | actionlint is more than a syntax check | Confirmed: it type-checks expressions | [R15] | T1 | none |

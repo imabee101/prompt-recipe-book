@@ -193,7 +193,7 @@ recipes/rust-ci-github-actions.md.
 | Item | Verdict | Evidence |
 | --- | --- | --- |
 | P01 | pass | line 56: `5. Timeouts (timeout-minutes): changes 5, gates 10,` |
-| P02 | pass | line 181: `Create these jobs in order.` |
+| P02 | pass | line 186: `Create these jobs in order.` |
 | P03 | pass | line 29: `YAML with actionlint and follow <verification>. Otherwise, review` |
 | P04 | n/a | task type. Recipes bound scope (not_included, Done when); no above-and-beyond output is wanted. |
 | P05 | pass | line 78: `jobs in needs:. Reason: a job whose needed job fails is` |
@@ -204,58 +204,58 @@ recipes/rust-ci-github-actions.md.
 | P10 | n/a | task type. No input of 20k+ tokens is embedded. |
 | P11 | n/a | task type. Page scopes it to applications that must state the model's identity. |
 | P12 | pass | line 49: `3. Dependency updates stay manual: add no Dependabot, Renovate,` |
-| P13 | pass | line 377: `3. A table: job \| trigger event \| components and targets covered \|` |
-| P14 | pass | line 379: `4. A table of events (pull_request, merge_group, push to main with` |
+| P13 | pass | line 382: `3. A table: job \| trigger event \| components and targets covered \|` |
+| P14 | pass | line 384: `4. A table of events (pull_request, merge_group, push to main with` |
 | P15 | n/a | task type and API. No math, presentation, or document output; prefill is an API feature. |
 | P16 | pass | line 21: `Write one file, .github/workflows/ci.yml. It lints, checks, tests,` |
 | P17 | pass | line 21: `Write one file, .github/workflows/ci.yml. It lints, checks, tests,` |
 | P18 | pass | `grep -nE '\b(CRITICAL\|MUST\|ALWAYS\|NEVER\|IMPORTANT\|ALL\|ONLY)\b' recipes/rust-ci-github-actions.md` -> `(no output)` No hit. |
 | P19 | n/a | harness. Page offers it as optional tool-execution tuning; no deliverable depends on it. |
 | P20 | pass | `grep -ciE 'if in doubt\|default to using' recipes/rust-ci-github-actions.md` -> `0` |
-| P21 | pass | line 181: `Create these jobs in order.` |
+| P21 | pass | line 186: `Create these jobs in order.` |
 | P22 | pass | `grep -ciE 'step[- ]by[- ]step\|your reasoning\|chain[- ]of[- ]thought\|<thinking>\|think out loud' recipes/rust-ci-github-actions.md` -> `0` |
-| P23 | pass | line 349: `2. Confirm by search: no schedule or workflow_dispatch trigger,` |
+| P23 | pass | line 354: `2. Confirm by search: no schedule or workflow_dispatch trigger,` |
 | P24 | n/a | harness. Page scopes it to harnesses that compact or save context; a pasted prompt cannot configure that. |
 | P25 | n/a | task type. Page scopes it to tasks spanning several context windows; each recipe writes at most four files. |
 | P26 | pass | line 90: `13. Ask before deleting files, rewriting git history, pushing,` |
 | P27 | n/a | task type. Looking up a SHA in its own repository is a single-fact lookup, not research synthesis. |
 | P28 | n/a | task type. No recipe orchestrates subagents. |
-| P29 | pass | line 355: `4. Delete any temporary files you created for these checks.` |
-| P30 | pass | line 363: `Include only the jobs above. Leave out miri, fuzzing, benchmarks,` |
-| P31 | pass | line 359: `fix ci.yml, never the check.` |
+| P29 | pass | line 360: `4. Delete any temporary files you created for these checks.` |
+| P30 | pass | line 368: `Include only the jobs above. Leave out miri, fuzzing, benchmarks,` |
+| P31 | pass | line 364: `fix ci.yml, never the check.` |
 | P32 | pass | line 93: `14. Never invent crate names, paths, runner labels, versions, or` |
 | P33 | pass | line 4: `target_model: claude-sonnet-5-5` |
 | P34 | n/a | task type. No images, frontend design, or medication questions. |
 | S01 | pass | line 5: `suggested_effort: high` |
 | S02 | pass | `grep -ciE 'think less\|do not think\|don.t think' recipes/rust-ci-github-actions.md` -> `0` |
-| S03 | pass | line 370: `are reported. Keep working until then; stop to ask only when you` |
-| S04 | pass | line 372: `13. Then stop and report. Mention possible improvements at the end` |
+| S03 | pass | line 375: `are reported. Keep working until then; stop to ask only when you` |
+| S04 | pass | line 377: `13. Then stop and report. Mention possible improvements at the end` |
 | S05 | n/a | page ties it to xhigh and max effort; suggested_effort is high. |
 | S06 | n/a | task type. No open-ended request; each task names its deliverables. |
 | S07 | n/a | task type. No JSON answer is requested. |
 | S08 | pass | `grep -ciE 'hold all\|after every [0-9]+ tool' recipes/rust-ci-github-actions.md` -> `0` |
 | S09 | pass | line 26: `cargo metadata --locked. Look up each action's latest release and` |
 | S10 | n/a | harness and API settings that a pasted prompt cannot set. |
-| S11 | pass | line 348: `1. Run actionlint on ci.yml and fix every finding.` |
+| S11 | pass | line 353: `1. Run actionlint on ci.yml and fix every finding.` |
 | T01 | n/a | page scopes it to products that depend on a verbosity level. |
 | T02 | pass | `grep -ciE 'hold all\|after every [0-9]+ tool' recipes/rust-ci-github-actions.md` -> `0` |
 | T03 | pass | line 42: `Apply every rule to every job, not only the first one. Follow each` |
 | T04 | n/a | API settings (temperature) or task types not performed (design, computer use, tone). |
 | T05 | pass | line 20: `<task>` |
 | T06 | n/a | task type. The recipe has no review step that reports findings. |
-| E01 | pass | line 353: `3. Confirm that no two matrix legs can write the same rust-cache` |
+| E01 | pass | line 358: `3. Confirm that no two matrix legs can write the same rust-cache` |
 | E02 | pass | line 56: `5. Timeouts (timeout-minutes): changes 5, gates 10,` |
-| E03 | pass | line 357: `If you have no shell, state that the file is unvalidated. Never` |
+| E03 | pass | line 362: `If you have no shell, state that the file is unvalidated. Never` |
 | E04 | pass | line 34: `Every pull request gets fast, high-confidence feedback. A job runs` |
-| E05 | pass | line 349: `2. Confirm by search: no schedule or workflow_dispatch trigger,` |
-| E06 | pass | line 353: `3. Confirm that no two matrix legs can write the same rust-cache` |
-| E07 | pass | line 348: `1. Run actionlint on ci.yml and fix every finding.` |
+| E05 | pass | line 354: `2. Confirm by search: no schedule or workflow_dispatch trigger,` |
+| E06 | pass | line 358: `3. Confirm that no two matrix legs can write the same rust-cache` |
+| E07 | pass | line 353: `1. Run actionlint on ci.yml and fix every finding.` |
 | E08 | n/a | task type. Page addresses eval sets for an application; a recipe runs once per repository. |
 | E09 | n/a | task type. No LLM-graded check. |
 | R01 | pass | `scripts/check-recipes.sh; echo "exit $?"` -> `exit 0` |
 | R02 | pass | `grep -E '^<[a-z_]+>$' recipes/rust-ci-github-actions.md \| grep -v example \| tr -d '<>' \| tr '\n' ' '` -> `role task goal hard_rules config shared_config_files skip_logic jobs cache build_cost verification not_included deliverables` |
-| R03 | pass | line 369: `Done when all of these are produced and the verification results` |
-| R04 | pass | line 365: `and release dry runs in the merge queue.` |
+| R03 | pass | line 374: `Done when all of these are produced and the verification results` |
+| R04 | pass | line 370: `and release dry runs in the merge queue.` |
 | R05 | pass | `grep -cwiE 'should\|etc\|if appropriate\|if time allows' recipes/rust-ci-github-actions.md` -> `0` |
 | R06 | pass | `grep -c '\| T0 \|' research/rust-ci-github-actions-log.md` -> `0` |
 | R07 | pass | `for p in '0\.9\.89' 'fmt --all --check' 'docs/\*\*, \*\*/\*\.md, LICENSE\*' 'feat\|fix\|perf' 'skip-checks:' 'line-tables-only' 'test --doc' 'toolchain install M' 'manage-deps --dry-run'; do printf '%s ci=%s local=%s; ' "$p" $(grep -c -- "$p" recipes/rust-ci-github-actions.md) $(grep -c -- "$p" recipes/rust-local-check-script.md); done` -> `0\.9\.89 ci=1 local=1; fmt --all --check ci=1 local=1; docs/\*\*, \*\*/\*\.md, LICENSE\* ci=1 local=1; feat\|fix\|perf ci=1 local=1; skip-checks: ci=1 local=1; line-tables-only ci=1 local=1; test --doc ci=1 local=1; toolchain install M ci=1 local=1; manage-deps --dry-run ci=1 local=1;` |
@@ -270,6 +270,7 @@ Edits made:
 - S03, S04: deliverables now say to keep working until done, then stop and report, with improvements at the end.
 - P29, P31: verification now deletes temporary files and fixes the file, never the check.
 - R07 (parity): docs-only globs, cargo fmt --all --check, the skip-checks: wording, and the shared config files (linker bullet, fast nextest profile) now match the local recipe.
+- Linker test on this machine [L2]: the shared clang settings now pass -C link-arg=--target=<triple>, without which a cross-link fails.
 - Follow-up reconciliation: rule 8 now declines the workflow dependency lockfile (public preview [G12]) and stops if one exists; mold was replaced by the shared linker settings (rust-lld by default on x86_64 from Rust 1.90 [R17]; clang and lld installed only on native jobs that need them [G11]); linker settings apply only to native triples, since cargo zigbuild uses zig as the linker [R16].
 
 Status decision: verified. No item fails (48 pass, 0 fail,
@@ -296,8 +297,8 @@ recipes/rust-local-check-script.md.
 | P10 | n/a | task type. No input of 20k+ tokens is embedded. |
 | P11 | n/a | task type. Page scopes it to applications that must state the model's identity. |
 | P12 | pass | line 77: `9. Keep the real repo's target dirs between runs: never run` |
-| P13 | pass | line 352: `4. A table: mode \| stages in order \| scope \| what it catches.` |
-| P14 | pass | line 286: `- Stage success: "[ok] <stage> <seconds>s"` |
+| P13 | pass | line 357: `4. A table: mode \| stages in order \| scope \| what it catches.` |
+| P14 | pass | line 291: `- Stage success: "[ok] <stage> <seconds>s"` |
 | P15 | n/a | task type and API. No math, presentation, or document output; prefill is an API feature. |
 | P16 | pass | line 21: `Write one bash script, scripts/check, plus the config files it` |
 | P17 | pass | line 21: `Write one bash script, scripts/check, plus the config files it` |
@@ -306,48 +307,48 @@ recipes/rust-local-check-script.md.
 | P20 | pass | `grep -ciE 'if in doubt\|default to using' recipes/rust-local-check-script.md` -> `0` |
 | P21 | pass | line 56: `4. Order stages cheapest to costliest. Reason: the quickest` |
 | P22 | pass | `grep -ciE 'step[- ]by[- ]step\|your reasoning\|chain[- ]of[- ]thought\|<thinking>\|think out loud' recipes/rust-local-check-script.md` -> `0` |
-| P23 | pass | line 307: `1. Run shellcheck on scripts/check and fix every warning.` |
+| P23 | pass | line 312: `1. Run shellcheck on scripts/check and fix every warning.` |
 | P24 | n/a | harness. Page scopes it to harnesses that compact or save context; a pasted prompt cannot configure that. |
 | P25 | n/a | task type. Page scopes it to tasks spanning several context windows; each recipe writes at most four files. |
 | P26 | pass | line 88: `13. Ask before deleting files, rewriting git history, pushing, or` |
 | P27 | n/a | task type. No research step; inputs come from the workspace. |
 | P28 | n/a | task type. No recipe orchestrates subagents. |
-| P29 | pass | line 327: `4. Delete the scratch workspace.` |
+| P29 | pass | line 332: `4. Delete the scratch workspace.` |
 | P30 | pass | line 86: `12. Implement only what this prompt specifies. Reason: every extra` |
-| P31 | pass | line 331: `fix the script, never the check, and make the script work for` |
+| P31 | pass | line 336: `fix the script, never the check, and make the script work for` |
 | P32 | pass | line 92: `14. Never invent crate names, paths, triples, or versions. Reason:` |
 | P33 | pass | line 4: `target_model: claude-sonnet-5-5` |
 | P34 | n/a | task type. No images, frontend design, or medication questions. |
 | S01 | pass | line 5: `suggested_effort: high` |
 | S02 | pass | `grep -ciE 'think less\|do not think\|don.t think' recipes/rust-local-check-script.md` -> `0` |
-| S03 | pass | line 343: `are reported. Keep working until then; stop to ask only when you` |
-| S04 | pass | line 345: `13. Then stop and report. Mention possible improvements at the end` |
+| S03 | pass | line 348: `are reported. Keep working until then; stop to ask only when you` |
+| S04 | pass | line 350: `13. Then stop and report. Mention possible improvements at the end` |
 | S05 | n/a | page ties it to xhigh and max effort; suggested_effort is high. |
 | S06 | n/a | task type. No open-ended request; each task names its deliverables. |
 | S07 | n/a | task type. No JSON answer is requested. |
 | S08 | pass | `grep -ciE 'hold all\|after every [0-9]+ tool' recipes/rust-local-check-script.md` -> `0` |
 | S09 | pass | line 194: `a. preflight (target under 1 second): confirm git, jq,` |
 | S10 | n/a | harness and API settings that a pasted prompt cannot set. |
-| S11 | pass | line 308: `2. In a scratch workspace in a temporary directory, never in the` |
+| S11 | pass | line 313: `2. In a scratch workspace in a temporary directory, never in the` |
 | T01 | n/a | page scopes it to products that depend on a verbosity level. |
 | T02 | pass | `grep -ciE 'hold all\|after every [0-9]+ tool' recipes/rust-local-check-script.md` -> `0` |
 | T03 | pass | line 42: `Apply every rule to all three modes (fast, gate, build), not only` |
 | T04 | n/a | API settings (temperature) or task types not performed (design, computer use, tone). |
 | T05 | pass | line 20: `<task>` |
 | T06 | n/a | task type. The recipe has no review step that reports findings. |
-| E01 | pass | line 312: `- a change in a reports a, b, c as affected;` |
-| E02 | pass | line 313: `- a deliberate clippy warning stops at clippy, never starts` |
-| E03 | pass | line 329: `If you have no shell, state that the script is untested. Never` |
+| E01 | pass | line 317: `- a change in a reports a, b, c as affected;` |
+| E02 | pass | line 318: `- a deliberate clippy warning stops at clippy, never starts` |
+| E03 | pass | line 334: `If you have no shell, state that the script is untested. Never` |
 | E04 | pass | line 31: `Deliver the fastest possible signal when something is wrong, and` |
-| E05 | pass | line 353: `5. A table: mode \| what a green result verifies \| what it does` |
-| E06 | pass | line 311: `- a docs-only change exits 0 immediately;` |
-| E07 | pass | line 307: `1. Run shellcheck on scripts/check and fix every warning.` |
+| E05 | pass | line 358: `5. A table: mode \| what a green result verifies \| what it does` |
+| E06 | pass | line 316: `- a docs-only change exits 0 immediately;` |
+| E07 | pass | line 312: `1. Run shellcheck on scripts/check and fix every warning.` |
 | E08 | n/a | task type. Page addresses eval sets for an application; a recipe runs once per repository. |
 | E09 | n/a | task type. No LLM-graded check. |
 | R01 | pass | `scripts/check-recipes.sh; echo "exit $?"` -> `exit 0` |
 | R02 | pass | `grep -E '^<[a-z_]+>$' recipes/rust-local-check-script.md \| grep -v example \| tr -d '<>' \| tr '\n' ' '` -> `role task goal hard_rules config hakari hakari_setup change_detection modes config_files output_format verification not_included deliverables` |
-| R03 | pass | line 342: `Done when all of these are produced and the verification results` |
-| R04 | pass | line 338: `installation, CI workflows, versioning, and releasing.` |
+| R03 | pass | line 347: `Done when all of these are produced and the verification results` |
+| R04 | pass | line 343: `installation, CI workflows, versioning, and releasing.` |
 | R05 | pass | `grep -cwiE 'should\|etc\|if appropriate\|if time allows' recipes/rust-local-check-script.md` -> `0` |
 | R06 | pass | `grep -c '\| T0 \|' research/rust-local-check-script-log.md` -> `0` |
 | R07 | pass | `for p in '0\.9\.89' 'fmt --all --check' 'docs/\*\*, \*\*/\*\.md, LICENSE\*' 'feat\|fix\|perf' 'skip-checks:' 'line-tables-only' 'test --doc' 'toolchain install M' 'manage-deps --dry-run'; do printf '%s ci=%s local=%s; ' "$p" $(grep -c -- "$p" recipes/rust-ci-github-actions.md) $(grep -c -- "$p" recipes/rust-local-check-script.md); done` -> `0\.9\.89 ci=1 local=1; fmt --all --check ci=1 local=1; docs/\*\*, \*\*/\*\.md, LICENSE\* ci=1 local=1; feat\|fix\|perf ci=1 local=1; skip-checks: ci=1 local=1; line-tables-only ci=1 local=1; test --doc ci=1 local=1; toolchain install M ci=1 local=1; manage-deps --dry-run ci=1 local=1;` |
@@ -363,6 +364,7 @@ Edits made:
 - R06 (corrected claim): the x86_64 linker reason now names Rust 1.90 [R12] and covers older pinned toolchains.
 - R07 (parity): docs-only globs now include .github/ISSUE_TEMPLATE/**, and the cargo deny trigger now includes .config/hakari.toml, matching the CI recipe.
 - Follow-up reconciliation: linker settings apply only to triples built with cargo, since cargo zigbuild uses zig as the linker [R16]; preflight now checks for clang and lld when those settings apply.
+- Linker test on this machine [L2]: the clang settings now pass -C link-arg=--target=<triple>, without which a cross-link fails.
 
 Status decision: verified. No item fails (48 pass, 0 fail,
 19 not applicable), no T0 claim remains in the log, and

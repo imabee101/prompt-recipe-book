@@ -259,7 +259,12 @@ the user.
 - [profile.dev.package."*"]: debug = false
 - Linker settings only for Linux triples other than
   x86_64-unknown-linux-gnu whose method is cargo: linker = "clang"
-  with rustflags ["-C", "link-arg=-fuse-ld=lld"]. Triples built
+  with rustflags ["-C", "link-arg=--target=<triple>", "-C",
+  "link-arg=-fuse-ld=lld"]. The --target argument is required:
+  rustc does not pass the target to clang, so without it a
+  cross-link from another host links for the host architecture.
+  Cross-linking also needs the target's C library (on Ubuntu,
+  libc6-dev-arm64-cross for aarch64). Triples built
   with cargo zigbuild get no linker settings, because zig is their
   linker. If rust-toolchain.toml pins a release older than Rust
   1.90, add the same settings for x86_64-unknown-linux-gnu.

@@ -29,6 +29,8 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Reduced debug info and no debug info for dependencies speed up builds | Confirmed | [R3] | T1 | .cargo/config.toml profile settings |
 | x86_64 Linux needs a linker override | Corrected: no override from Rust 1.90, which made LLD the default there; older pinned toolchains still need it | [R3] [R12] [R17] | T1 | Linker settings for other Linux triples, plus x86_64 when the toolchain is older than 1.90 |
 | Linker settings in .cargo/config.toml are safe for zigbuild triples | Not needed: cargo zigbuild uses zig as the linker, so only triples built with cargo get linker settings | [R16] | T1 | Linker bullet limited to method cargo |
+| linker = "clang" with -fuse-ld=lld links any Linux triple | Corrected by test: a cross-link fails because rustc does not pass the target to clang; adding -C link-arg=--target=<triple> fixes it. Native aarch64 was not available; clang accepted --target for its own host triple on x86_64 | [L2] | T1 | Linker bullet adds --target and notes the target C library |
+| x86_64 links with rust-lld by default; clang+lld fallback works | Confirmed by test | [L2] | T1 | none |
 | clang and lld are present wherever linker settings apply | Not assumed: preflight now checks for them | none (design) | n/a | Preflight in fast and gate modes |
 | Nextest stops at the first failure by default; max-fail and terminate are configurable | Confirmed | [R4] | T1 | fast and gate profiles |
 | Nextest runs doctests | Corrected: it does not; the official site says to run cargo test --doc | [R5] [R11] | T1 | Separate cargo test --doc stage in gate |
