@@ -183,3 +183,10 @@ live in each log's "Known gaps").
   https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview
 - Steering Claude Code (blog):
   https://claude.com/blog/steering-claude-code-skills-hooks-rules-subagents-and-more
+
+## Codex instruction discovery
+
+- [O1] T1. Custom instructions with AGENTS.md (global scope, CODEX_HOME,
+  first non-empty override precedence, instruction chain, loaded-sources
+  diagnostic). Relevant sections checked 2026-10-18.
+  https://developers.openai.com/codex/guides/agents-md

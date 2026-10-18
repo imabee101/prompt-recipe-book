@@ -10,6 +10,7 @@ session that has the tools the recipe lists under `requires`.
 | --- | --- | --- |
 | [rust-ci-github-actions](recipes/rust-ci-github-actions.md) | One event-driven GitHub Actions workflow for a Rust workspace | draft |
 | [rust-local-check-script](recipes/rust-local-check-script.md) | A local fast, gate, and build script for the same workspace | draft |
+| [slim-global-instruction-files](recipes/slim-global-instruction-files.md) | A backed-up, behavior-tested trim of global Claude Code, Codex, and Grok instructions | draft |
 | [claude-md-write-and-audit](recipes/claude-md-write-and-audit.md) | A new or audited CLAUDE.md that follows Anthropic's documentation | verified |
 
 The two Rust recipes are paired: same stages, flags, regexes, and version
