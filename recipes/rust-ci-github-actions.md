@@ -1,0 +1,342 @@
+---
+title: Rust CI pipeline on GitHub Actions (one event-driven workflow)
+slug: rust-ci-github-actions
+target_model: claude-sonnet-5-5
+suggested_effort: high
+status: draft
+last_verified: 2026-10-18
+requires: shell with actionlint (optional)
+pairs_with: rust-local-check-script
+---
+
+## Prompt
+
+```
+<role>
+You are a senior CI/release engineer who writes production-grade
+GitHub Actions for large Rust monorepos.
+</role>
+
+<task>
+Write one file, .github/workflows/ci.yml. It lints, checks, tests,
+versions, builds, and releases a Rust workspace that has multiple
+components and multiple target triples. The workspace uses
+cargo-hakari (a workspace-hack crate). Then produce the
+deliverables listed at the end. If you have a shell, validate the
+YAML with actionlint and follow <verification>. Otherwise, review
+the file against the rules below.
+</task>
+
+<goal>
+Every pull request gets fast, high-confidence feedback. A job runs
+only when the event and the diff make it relevant. This keeps cost
+low and prevents multi-hour builds. The same stages exist in the
+local script scripts/check gate, so a green local gate predicts a
+green CI run.
+</goal>
+
+<hard_rules>
+Apply every rule to every job, not only the first one. Follow each
+rule and its reason.
+1. One workflow file, no others. Reason: one pipeline is the only
+   place where ordering and cost can be reasoned about.
+2. Triggers: pull_request, push to main, merge_group. No schedule,
+   cron, polling, workflow_run, or workflow_dispatch. Reason: the
+   pipeline must be purely event-driven.
+3. No Dependabot, Renovate, or other bot config.
+4. This pipeline does all versioning and releasing. No manual
+   version bumps and no external release tools.
+5. Timeouts (timeout-minutes): changes 5, gates 10,
+   check-targets 15, test 20, msrv 15, warm-cache 20, version 5,
+   build 30, release 10, ci-ok 5. Reason: a hung job must not
+   burn hours.
+6. Concurrency group: ci-${{ github.ref }}. cancel-in-progress is
+   true only for pull_request. Reason: stale PR runs are waste;
+   main must finish, and because versions come from git tags, a
+   later main run releases everything an earlier cancelled-pending
+   run would have.
+7. Default permissions: contents: read. Only the release job gets
+   contents: write.
+8. Pin every third-party action to a full commit SHA with a
+   version comment. Checkout uses persist-credentials: false.
+   Reason: supply-chain safety.
+9. Every cargo command uses --locked. Reason: CI must fail if
+   Cargo.lock is out of date.
+10. Cheap jobs run first. Each expensive job lists the cheaper
+    jobs in needs:.
+11. The workspace uses cargo-hakari. Every cargo command selects
+    crates with -p or --workspace. Never hand-edit
+    workspace-hack/Cargo.toml. Exclude the workspace-hack package
+    from every -p list. Reason: the workspace-hack crate keeps the
+    dependency feature set identical for -p and --workspace runs,
+    so caches warmed on main by full-workspace runs are fully
+    reused by affected-only runs on pull requests.
+12. If any rule conflicts with real GitHub behavior, stop and
+    state the conflict. Do not work around it silently.
+</hard_rules>
+
+<config>
+Put this at the top of the file as one JSON block in env. Adding a
+component or target means editing only this block.
+
+COMPONENTS: name, path globs, crates, shipped targets,
+versioned (true/false), publish (true/false, crates.io).
+TARGETS: name, triple, runner, method (native or zigbuild),
+tier (1 or 2), tested (true/false), paths (globs of files that
+only matter to this target, such as src/sys/windows/**).
+
+Tier 1 is x86_64-unknown-linux-gnu: native, tested.
+Tier 2 is every other shipped triple. Tier 2 with a native runner
+is tested. Tier 2 built with zigbuild is not tested.
+
+<example>
+COMPONENTS: {"name":"api","paths":["crates/api/**"],
+"crates":["api"],"targets":["x86_64-unknown-linux-gnu",
+"aarch64-apple-darwin"],"versioned":true,"publish":false}
+TARGETS: {"name":"macos-arm","triple":"aarch64-apple-darwin",
+"runner":"macos-14","method":"native","tier":2,"tested":true,
+"paths":["**/sys/macos/**"]}
+</example>
+</config>
+
+<shared_config_files>
+Create these files only if they do not already exist. Both are
+shared with the local script scripts/check.
+
+.cargo/config.toml
+- [profile.dev]: debug = "line-tables-only"
+- [profile.dev.package."*"]: debug = false
+
+.config/nextest.toml (requires cargo-nextest 0.9.89 or newer)
+- [profile.gate]: fail-fast = { max-fail = 1 },
+  failure-output = "immediate-final",
+  slow-timeout = { period = "60s", terminate-after = 5 }
+</shared_config_files>
+
+<skip_logic>
+- Do not use paths-ignore on triggers. The workflow always starts.
+- The changes job sets skip=true when every changed file matches
+  docs/**, *.md, LICENSE, or .github/ISSUE_TEMPLATE/**.
+- When skip=true, every job except changes and ci-ok is skipped,
+  and ci-ok reports success.
+- Do not implement a commit-message skip token. GitHub natively
+  drops runs containing [skip ci], [ci skip], [no ci],
+  [skip actions], [actions skip], or a skip-checks trailer, which
+  leaves required checks pending and blocks merges. The commit
+  lint on pull requests must reject those strings.
+- A skipped push to main cuts no release.
+</skip_logic>
+
+<jobs>
+Create these jobs in order.
+
+1. changes
+   - Check out with fetch-depth: 0 (history and tags needed).
+   - Diff base per event: pull_request uses the three-dot diff
+     from github.event.pull_request.base.sha; merge_group uses
+     github.event.merge_group.base_sha; push uses
+     github.event.before.
+   - Outputs: skip, deps_changed, affected components (JSON),
+     affected targets (JSON), and per-target matrices (fromJSON).
+   - deps_changed=true when any changed file is a Cargo.toml,
+     Cargo.lock, or .config/hakari.toml.
+   - Affected components = components with changed files plus all
+     reverse dependencies from cargo metadata, excluding the
+     workspace-hack package.
+   - Changes to Cargo.lock, rust-toolchain.toml, the workspace-hack
+     Cargo.toml, .config/hakari.toml, .cargo/config.toml,
+     .config/nextest.toml, a shared crate, or
+     .github/workflows/ci.yml mark ALL components affected.
+   - Unaffected targets get no matrix entry, so no job.
+
+2. gates (needs: changes; runs when skip=false)
+   - cargo fmt --check
+   - cargo clippy --all-targets --locked -- -D warnings on
+     x86_64-unknown-linux-gnu. On pull_request and merge_group use
+     -p <affected crates>. On push to main use --workspace
+     (ignore the affected filter) so the lint cache stays warm.
+     This also covers Tier 1 compile checking.
+   - cargo deny check when deps_changed=true.
+   - When deps_changed=true, run cargo hakari generate --diff and
+     cargo hakari manage-deps --dry-run (both non-compiling). On
+     failure print: "Fix: cargo hakari generate && cargo hakari
+     manage-deps".
+   - pull_request only: lint every commit subject in the PR
+     against
+     ^(feat|fix|perf|docs|chore|ci|test|style|refactor|build|revert)(\([^)]+\))?!?: .+
+     and reject any subject or body containing the native
+     skip strings listed in <skip_logic>.
+
+3. check-targets (needs: gates; pull_request and merge_group)
+   - Matrix by target (one leg per target). Each leg runs
+     cargo check --target <triple> --locked
+     -p <affected crates for that target>.
+   - Tier 1 is excluded because clippy already covers it.
+   - pull_request: only Tier 2 targets whose `paths` globs match
+     a changed file.
+   - merge_group: all Tier 2 targets.
+
+4. test (needs: gates; pull_request and merge_group)
+   - Matrix by target (one leg per target).
+   - cargo nextest run --locked --profile gate
+     -p <affected crates>, run natively on the runner with no
+     --target flag.
+   - pull_request: Tier 1 only.
+   - merge_group: Tier 1 plus every Tier 2 target with
+     tested=true. On Tier 1 also run
+     cargo test --doc --locked --workspace.
+
+5. msrv (needs: gates; merge_group and push to main)
+   - Let M be the highest rust-version among workspace members,
+     from cargo metadata. If none is set, skip the job's steps and
+     print "MSRV: not configured".
+   - Install M with rustup toolchain install M --profile minimal,
+     then run cargo +M check --workspace --locked.
+   - Runs on x86_64-unknown-linux-gnu only.
+
+6. warm-cache (needs: gates; push to main only; skip=false)
+   - Purpose: save the caches that pull_request and merge_group
+     runs restore. Tests already passed in the merge queue, so do
+     not run them.
+   - For ALL components (ignore the affected filter), per target:
+     cargo check --target <triple> and
+     cargo nextest run --no-run (host triple only, on targets with
+     tested=true). The gates job warms the lint key and the msrv
+     job warms the msrv key.
+
+7. version (needs: gates; push to main only)
+   - Source of truth: git tags named <component>-vX.Y.Z.
+   - For each component with versioned=true, read commits since
+     its last tag: feat = minor; fix and perf = patch; "!" or
+     BREAKING CHANGE = major; docs, chore, ci, test, style,
+     refactor, build, and revert = no release.
+   - Components with no releasable commits are excluded. If none
+     remain, output release=false.
+   - Never commit to main. No version-bump commits.
+   - Pass versions to builds as CI_VERSION_<COMPONENT_NAME>
+     environment variables, read by that component's build.rs.
+     Do not edit Cargo.toml in the repo.
+   - If a tag already exists, reuse it and continue. Re-runs must
+     succeed.
+   - Output the release matrix: per target, the released
+     components and versions.
+
+8. build (needs: version; release=true; push to main only)
+   - Matrix by target (one leg per target). Each leg builds all
+     released components for that target in one command:
+     cargo build --release --locked --target <triple>
+     -p a -p b.
+   - native method: build on the target runner.
+   - zigbuild method: cargo zigbuild --release --locked
+     --target <triple> -p a -p b on ubuntu-latest.
+   - Upload artifacts and SHA256 checksums.
+
+9. release (needs: build; push to main only)
+   - Create tag <component>-vX.Y.Z at the pushed commit.
+   - Create one GitHub Release per component with notes
+     generated from its conventional commits. Attach artifacts
+     and checksums.
+   - Run cargo publish --locked -p <crate> for components with
+     publish=true, using the CARGO_REGISTRY_TOKEN secret, in this
+     job only. This needs no special handling because the
+     workspace-hack setup from cargo hakari init (cargo-hakari
+     0.9.9 or newer) targets the empty workspace-hack crate
+     already on crates.io.
+   - Comment in the file: tags and releases created with
+     GITHUB_TOKEN do not trigger workflows, so there is no loop.
+
+10. ci-ok (needs: all jobs above; if: always())
+    - The only required status check for branch protection and the
+      merge queue.
+    - Pass when every needed job succeeded or was skipped because
+      skip=true or release=false. Fail when any needed job has
+      result failure or cancelled.
+</jobs>
+
+<cache>
+- Use Swatinem/rust-cache on every Rust job. It already hashes
+  Cargo manifests, lockfiles, and toolchain files into the key,
+  so do not add those yourself.
+- shared-key = "<target-triple>-<job-type>", where job-type is one
+  of lint, check, test, msrv, release. Reason: each job type
+  compiles different artifacts, and sharing one key across them
+  causes cache hits that still rebuild.
+- Matrix legs are per target, never per component, so no two
+  legs write the same key.
+- save-if: github.ref == 'refs/heads/main'. Pull requests and the
+  merge queue only restore. They fall back to main's caches.
+- The gates, msrv, and warm-cache jobs on main run with ALL
+  components so every key used by pull requests and merge_group
+  stays warm.
+- Release builds restore and save their own "-release" keys on
+  main only.
+- Above each cache step, add a comment explaining why it hits.
+  After each cache step, print the cache-hit output.
+</cache>
+
+<build_cost>
+- rust-toolchain.toml pins the toolchain and lists all targets.
+- Set CARGO_INCREMENTAL=0 in the workflow env. Take all profile
+  settings from the committed .cargo/config.toml. Do not repeat
+  them in env.
+- Never set RUSTFLAGS in the workflow. Reason: it replaces
+  rustflags from .cargo/config.toml. Pass -D warnings to clippy
+  after --.
+- Use mold on Linux native jobs.
+- Install cargo-nextest, cargo-deny, cargo-hakari, and
+  cargo-zigbuild with taiki-e/install-action. Never use
+  cargo install.
+- Every matrix sets fail-fast: true and max-parallel: 6.
+</build_cost>
+
+<not_included>
+Include only the jobs above. Leave out miri, fuzzing, benchmarks,
+coverage, scheduled or nightly checks, tests for zigbuild targets,
+and release dry runs in the merge queue.
+</not_included>
+
+<verification>
+If you have a shell:
+1. Run actionlint on ci.yml and fix every finding.
+2. Confirm by search: no schedule or workflow_dispatch trigger,
+   every job has timeout-minutes, every third-party action is
+   pinned to a full SHA, no RUSTFLAGS, and every cargo command has
+   --locked.
+3. Confirm that no two matrix legs can write the same rust-cache
+   shared-key.
+4. Report the actual output of each check.
+If you have no shell, state that the file is unvalidated. Never
+claim a check passes without having run it.
+</verification>
+
+<deliverables>
+Done when all of these are produced and the verification results
+are reported. Produce them in this order:
+1. The complete ci.yml with brief comments and no placeholders.
+2. Any shared config file from <shared_config_files> that did not
+   already exist.
+3. A table: job | trigger event | components and targets covered |
+   expected runtime | what it catches.
+4. A table of events (pull_request, merge_group, push to main with
+   docs-only, push to main with code), each marked skip, check
+   only, test, cache warm, or release.
+5. The list of targets that are built but never tested.
+6. Two sentences on how to cut a release: merge a feat or fix
+   commit to main.
+7. One sentence confirming the one-time hakari setup
+   (cargo hakari init, manage-deps, generate) is committed
+   before this workflow is enabled.
+</deliverables>
+```
+
+## Usage
+
+Paste the prompt into a Claude session opened in the Rust repository.
+A shell lets the session run actionlint and the verification checks.
+Commit the one-time cargo-hakari setup before enabling the workflow.
+Run rust-local-check-script in the same repository to keep both in parity.
+Status is draft: recheck the T0 claims in the log before relying on it.
+
+## Provenance
+
+[Research log](../research/rust-ci-github-actions-log.md)
