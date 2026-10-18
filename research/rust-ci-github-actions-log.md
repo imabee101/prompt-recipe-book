@@ -1,7 +1,7 @@
 # Research log: rust-ci-github-actions
 
 Recipe: ../recipes/rust-ci-github-actions.md
-Checked: 2026-10-18
+Checked: 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
 Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 
 ## Requirements
@@ -25,44 +25,49 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 
 | Claim | Verdict | Source | Tier | Prompt change |
 | --- | --- | --- | --- | --- |
-| A manual skip token in the commit message is a safe opt-out | Corrected: GitHub drops runs containing its own skip strings, and required checks stay pending | [G2] | T1 (Enterprise Server 3.5) | File-based skip only. Commit lint rejects the native strings |
+| A manual skip token in the commit message is a safe opt-out | Corrected: GitHub drops push and pull_request runs containing its own skip strings or a skip-checks: trailer, and required checks stay pending. Rechecked on github.com | [G2] [G3] | T1 | File-based skip only. Commit lint rejects the native strings |
 | One rust-cache key can be shared by lint, check, test, and build | Corrected: jobs that compile different artifacts get cache hits that still rebuild | [R2] | T2 | shared-key per target and job type |
 | The cache key must include Cargo.lock and toolchain inputs | Redundant: the action already hashes them | [R1] | T1 | Instruction removed |
 | Pull requests and the merge queue can restore caches saved on main | Confirmed | [G1] | T1 | Save only on main; main warms every key |
 | Scoped (-p) and full-workspace runs share compiled dependencies | Corrected: scoping changes the enabled features | [R7] [R8] | T2 and T1 | cargo-hakari added; rule 11 |
 | cargo publish works unchanged with a workspace-hack crate | Corrected: publish can reject the local-only dependency; an empty workspace-hack crate on crates.io avoids it | [R8] | T1 | Require cargo-hakari 0.9.9 or newer; plain cargo publish |
 | hakari drift is checked with generate --diff and manage-deps --dry-run | Confirmed | [R8] | T1 | Added to the gates job |
-| Nextest runs doctests | Corrected: it does not | [R5] | T2 | cargo test --doc on Tier 1 in merge_group |
+| Nextest runs doctests | Corrected: it does not; the official site says to run cargo test --doc | [R5] [R11] | T1 | cargo test --doc on Tier 1 in merge_group |
 | Debug info settings reduce build cost | Confirmed | [R3] | T1 | Shared .cargo/config.toml settings |
 | Nextest stops at the first failure by default | Confirmed | [R4] | T1 | gate profile in .config/nextest.toml |
 | Models apply an instruction only where it is stated | Corrected: scope must be explicit | [A3] | T1 | Scope sentence at the top of hard_rules |
 | Models stop early or add unrequested extras | Confirmed | [A2] | T1 | not_included list and a "Done when" condition |
-| The post-merge push to main should re-run tests | Inefficient: the merge queue already ran them | none | T0 | warm-cache job compiles only |
-| A release dry run in the merge queue adds safety | Wasteful: it duplicates the main build | none | T0 | Removed |
-| Pin actions to full SHAs, disable credential persistence, use --locked | Standard practice | none | T0 | Rules 8 and 9 |
+| The post-merge push to main should re-run tests | Inefficient: the merge queue merges the merge group whose required checks passed | [G8] | T1 | warm-cache job compiles only |
+| A release dry run in the merge queue adds safety | Wasteful: the tested merge group is what reaches main [G8], and the build job on main repeats the same build | [G8] | T1 | Removed |
+| Pin actions to full SHAs, disable credential persistence | Confirmed: GitHub recommends full-length SHA pins when a workflow lockfile is not used; checkout persists the token by default and persist-credentials: false opts out | [G7] [G9] | T1 | Rule 8 |
+| merge_group diff base is github.event.merge_group.base_sha | Confirmed: base_sha is the merge group's parent commit | [G6] | T1 | none |
+| With cancel-in-progress false, a newer queued run replaces the pending one | Confirmed for the default queue: single | [G4] | T1 | none |
+| Tags and releases created with GITHUB_TOKEN do not trigger workflows | Confirmed: only workflow_dispatch, repository_dispatch, and some pull_request types are exceptions | [G5] | T1 | none |
+| Conventional Commits mapping (feat minor, fix and perf patch, ! or BREAKING CHANGE major, other types no release) | Confirmed: feat, fix, and breaking come from the spec; perf = patch follows semantic-release's default; revert = no release matches the spec (semantic-release defaults reverts to patch) | [S1] [S2] | T1 | none |
+| Commit-subject regex and its type list | Confirmed: matches the spec grammar (type, optional scope, optional !, colon and space); the 11 types equal commitlint's type-enum | [S1] [S3] | T1 | none |
+| --locked fails when Cargo.lock needs updating | Confirmed: Cargo exits with an error when the lock file is missing or would change | [R10] | T1 | Rule 9 |
+| Default contents: read is least privilege | Confirmed | [G7] | T1 | Rule 7 reason |
+| A job whose needed job fails is skipped unless it uses always() | Confirmed | [G10] | T1 | Rule 10 reason; ci-ok uses always() |
+| cargo fmt --check and cargo fmt --all --check behave the same | Not assumed: --all is the documented workspace-wide form; aligned with the local script | [L1] | T1 | gates job uses --all |
+| x86_64 Linux links with LLD by default | Confirmed from Rust 1.90 | [R12] | T1 | Shared .cargo/config.toml linker bullet (parity) |
+| macos-14 runner is arm64 | Confirmed | [G11] | T1 | none (example value) |
+| actionlint is more than a syntax check | Confirmed: it type-checks expressions | [R15] | T1 | none |
+| Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
 
 ## Known gaps
 
-T0, from memory and not searched:
-
-- github.event.merge_group.base_sha as the merge-queue diff base.
-- A newer queued run replaces an older pending run when
-  cancel-in-progress is false.
-- Tags and releases created with GITHUB_TOKEN do not trigger workflows.
-- The Conventional Commits mapping and the commit-subject regex.
-- Pinning actions to SHAs and persist-credentials: false as best practice.
+T0, from memory and not searched: none. Every earlier T0 row was
+re-verified on 2026-10-18 (see Findings).
 
 Sources with limits:
 
-- [G2] is an Enterprise Server 3.5 page. Recheck the github.com page for
-  the native skip strings.
-- [R5] is a third-party blog. Recheck the doctest limitation on nexte.st.
 - [R2] is evidence from pull request discussions, not official docs.
+- [R5] is a third-party blog, now backed by [R11].
+- [G2] is an Enterprise Server 3.5 page, now backed by [G3].
 
 Process gaps:
 
 - Early revisions used search snippets of [A1]. [A1] and [A2] were read in
   full later.
-- The prompt uses one example per config block. [A1] recommends 3 to 5
-  examples when the output format is the main risk.
-- Status stays draft until the T0 claims are verified.
+- [G7] now ranks workflow dependency lockfiles above SHA pinning. The
+  recipe still pins SHAs, which [G7] recommends when no lockfile is used.

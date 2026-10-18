@@ -20,9 +20,11 @@ documentation.
 
 <task>
 Write or audit the project CLAUDE.md for the repository in the
-current working directory. If a CLAUDE.md exists, audit it and
-rewrite it in place (git keeps the old version). If none exists,
-create one. Then produce the deliverables listed at the end.
+current working directory. If a committed CLAUDE.md exists with no
+uncommitted changes, audit it and rewrite it in place, because git
+keeps the committed version. If it has uncommitted changes, ask
+before rewriting it. If none exists, create one. Then produce the
+deliverables listed at the end.
 </task>
 
 <goal>
@@ -44,7 +46,8 @@ create, not only the first one.
    does, and organized sections are easier to follow.
 4. Make every instruction concrete enough to verify. Write
    "Run cargo nextest run before committing", not "test your
-   changes".
+   changes". Reason: Claude follows an instruction it can check
+   more reliably than a vague one.
 5. Remove contradictions. Reason: when two rules conflict, Claude
    may pick one arbitrarily.
 6. Never rely on CLAUDE.md to enforce a rule. If a rule must hold
@@ -63,10 +66,15 @@ create, not only the first one.
 10. Never write secrets, tokens, personal paths, or personal
     preferences into the project file. Personal project-specific
     preferences go in CLAUDE.local.md, which is gitignored.
+    Reason: the project file is committed, so everyone who clones
+    the repository receives its contents.
 11. Never invent commands, paths, or environment variables. Run
-    or check each one, or omit it.
-12. Ask before deleting files or rewriting git history. Writing
-    CLAUDE.md in place is allowed.
+    or check each one, or omit it. Reason: every later session
+    trusts the file, so one wrong command repeats in each of them.
+12. Ask before deleting files, rewriting git history, or
+    overwriting uncommitted changes. Writing a committed CLAUDE.md
+    in place is allowed. Reason: those actions are hard to
+    reverse.
 </hard_rules>
 
 <spec>
@@ -88,9 +96,12 @@ have a web fetch tool, re-fetch the three pages listed under
   four hops deep, loaded at launch. Import syntax is ignored
   inside code spans and fenced code blocks. Imports that resolve
   outside the working directory need a one-time approval.
-- AGENTS.md: Claude Code reads CLAUDE.md, not AGENTS.md. To share
-  one set of instructions, write a CLAUDE.md that starts with
-  @AGENTS.md and adds Claude-specific lines below it.
+- AGENTS.md: Claude Code v2.1.277 or later reads AGENTS.md only
+  when no CLAUDE.md or CLAUDE.local.md exists in the working
+  directory or above it; when both exist it reads CLAUDE.md only.
+  So a new CLAUDE.md in a repository with AGENTS.md hides AGENTS.md.
+  To share one set of instructions, write a CLAUDE.md that starts
+  with @AGENTS.md and adds Claude-specific lines below it.
 - /init generates a starter file and suggests improvements when a
   file already exists. Setting CLAUDE_CODE_NEW_INIT=1 enables an
   interactive flow.
@@ -103,10 +114,17 @@ have a web fetch tool, re-fetch the three pages listed under
   reach a running session until /clear, /compact, or a restart.
 - Debugging: /context lists loaded memory files; /memory opens
   them; /doctor proposes trims for content Claude can derive from
-  the codebase (requires Claude Code v2.1.206 or later);
+  the codebase; /doctor prompt-audit (Claude Code v2.1.283 or
+  later) reports outdated or conflicting instructions;
   claude --safe-mode starts with CLAUDE.md and other customizations
   disabled.
 </spec>
+
+<sources>
+https://code.claude.com/docs/en/memory.md
+https://code.claude.com/docs/en/best-practices.md
+https://code.claude.com/docs/en/features-overview.md
+</sources>
 
 <routing>
 Route each candidate instruction to exactly one place:
@@ -153,6 +171,28 @@ is state worth preserving, such as modified files or test
 commands.
 </content_rules>
 
+<examples>
+Audit table rows. The commands are illustrative; take real ones
+from the repository.
+<example>
+"Keep the code tidy." | rewrite | vague | CLAUDE.md:
+"Run cargo fmt --all before committing."
+</example>
+<example>
+"The API lives in crates/api and uses Axum." | cut | derivable
+from code | none
+</example>
+<example>
+"Always run the linter before pushing." | move | needs
+enforcement | proposed pre-push hook
+</example>
+<example>
+"Files under migrations/ are generated; create them with
+make migration NAME=<name>." | keep | a gotcha Claude cannot
+derive | CLAUDE.md
+</example>
+</examples>
+
 <steps>
 1. Fetch the pages under <sources> when a web fetch tool exists.
 2. Read the repository: README, package manifests, CI config,
@@ -181,7 +221,7 @@ apply the same rules and write only personal preferences.
 <maintenance>
 Put these rules in the HTML comment at the end of CLAUDE.md.
 - Add a line when Claude makes the same mistake twice, a code
-  review catches something Claude should have known, someone types
+  review catches something Claude missed, someone types
   the same correction again, or a new teammate would need the same
   context.
 - Remove a line when Claude behaves correctly without it, when it
@@ -205,13 +245,15 @@ If you have a shell:
    form) and ls each path. Report exit status. Cut or fix every
    failure.
 3. Run grep -niE 'properly|clean code|best practices|where possible|as needed|try to' CLAUDE.md
-   Rewrite or cut each hit.
+   Judge each hit against hard rule 4. Rewrite or cut each line
+   that is not concrete enough to verify.
 4. List the rules by topic and confirm no two conflict.
 5. If Claude Code is available, run /context and confirm
    CLAUDE.md appears under Memory files, run /doctor, and ask a
    fresh session one question that only CLAUDE.md can answer.
 Report the actual output of each check. If you cannot run a
-check, say so. Never claim a check passed without running it.
+check, say which one and why. Never claim a check passed without
+running it. When a check fails, fix CLAUDE.md, never the check.
 </verification>
 
 <not_included>
@@ -224,8 +266,10 @@ file except CLAUDE.md and .gitignore. Do not add sections beyond
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Then stop and report. Mention possible improvements
-at the end instead of making them. Produce them in this order:
+are reported. Keep working until then; stop to ask only when you
+cannot continue without the user or before an action in hard rule
+12. Then stop and report. Mention possible improvements at the end
+instead of making them. Produce them in this order:
 1. CLAUDE.md, 200 lines or fewer.
 2. Audit mode: the audit table. Create mode: a table of line group
    | evidence (the file read or command run).
@@ -236,12 +280,6 @@ at the end instead of making them. Produce them in this order:
 6. Three sentences on maintenance: when to add, when to prune,
    and that root edits apply after /clear, /compact, or restart.
 </deliverables>
-
-<sources>
-https://code.claude.com/docs/en/memory.md
-https://code.claude.com/docs/en/best-practices.md
-https://code.claude.com/docs/en/features-overview.md
-</sources>
 ```
 
 ## Usage

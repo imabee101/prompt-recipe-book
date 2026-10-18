@@ -1,7 +1,7 @@
 # Research log: claude-md-write-and-audit
 
 Recipe: ../recipes/claude-md-write-and-audit.md
-Checked: 2026-10-18
+Checked: 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
 Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 
 ## Requirements
@@ -31,21 +31,25 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Maintenance triggers | Confirmed: repeated mistakes, review findings, retyped corrections; review in pull requests; revisit after model releases | [C1] [C5] [C3] | T1 | maintenance section |
 | Debugging aids | /context, /memory, /doctor (v2.1.206 or later), safe mode | [C1] [C4] | T1 | spec and verification sections |
 | Models stop early or add unrequested extras | Confirmed | [A2] | T1 | not_included and "Done when" |
-| A vague-term grep finds weak instructions | Own heuristic | none | T0 | verification step 3 |
-| Rewrite an existing file in place | Design choice; git keeps the old version. /init suggests improvements instead of overwriting | [C1] | T1 and T0 | task section |
+| A vague-term grep finds weak instructions | Corrected: "properly" and "clean code" are the docs' own examples of vague or self-evident lines; the other terms are only a search aid, so each hit is now judged against hard rule 4 | [C1] [C2] | T1 | verification step 3 judges hits instead of rewriting all |
+| Rewrite an existing file in place; git keeps the old version | Corrected: git restores only tracked, committed content; uncommitted edits would be lost. /init suggests improvements instead of overwriting | [S7] [C1] | T1 | task section asks before rewriting an uncommitted file; hard rule 12 |
+| Claude Code reads CLAUDE.md, not AGENTS.md | Corrected: v2.1.277 or later reads AGENTS.md when no CLAUDE.md or CLAUDE.local.md exists; with both, CLAUDE.md only by default | [C1] | T1 | spec AGENTS.md line |
+| /doctor trims derivable content (v2.1.206 or later) | Partly confirmed: the trim behavior is documented; the version number is on no current page and was removed. /doctor prompt-audit (v2.1.283 or later) audits instruction files | [C1] [C4] [C7] | T1 | spec debugging line |
+| Edits to root and user CLAUDE.md apply after /clear, /compact, or restart | Confirmed | [C6] | T1 | none |
+| /context lists CLAUDE.md under Memory files; claude --safe-mode disables customizations | Confirmed | [C1] [C4] | T1 | none |
+| Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
 
 ## Known gaps
 
-T0, from memory and not searched:
-
-- The vague-term grep list in verification step 3.
-- Rewriting in place as the default for audit mode.
+T0, from memory and not searched: none. The two T0 rows were re-verified
+on 2026-10-18 (see Findings).
 
 Sources with limits:
 
 - Managed-policy file locations were read but not tested on a machine.
-- Version-gated items (the /doctor trim check needs v2.1.206 or later) need
-  rechecking when Claude Code changes.
+- Version-gated items (AGENTS.md reading needs v2.1.277 or later;
+  /doctor prompt-audit needs v2.1.283 or later) need rechecking when
+  Claude Code changes.
 - CLAUDE_CODE_NEW_INIT behavior may change.
 - The Claude blog post on steering Claude Code was not read.
 

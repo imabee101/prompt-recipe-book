@@ -17,6 +17,9 @@ live in each log's "Known gaps").
   https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5
 - [A3] T1. Prompting Claude Sonnet 5. Literal instruction following.
   https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5
+- [A4] T1. Define success criteria and build evaluations (specific,
+  measurable, achievable, relevant criteria; code-graded checks).
+  https://platform.claude.com/docs/en/test-and-evaluate/develop-tests.md
 
 ## Claude Code documentation
 
@@ -37,6 +40,8 @@ live in each log's "Known gaps").
 - [C6] T1. How Claude Code uses prompt caching (when CLAUDE.md edits
   apply).
   https://code.claude.com/docs/en/prompt-caching.md
+- [C7] T1. Claude Code commands reference (/doctor and prompt-audit).
+  https://code.claude.com/docs/en/commands.md
 
 ## GitHub
 
@@ -46,6 +51,35 @@ live in each log's "Known gaps").
 - [G2] T1, Enterprise Server 3.5 version. Skipping workflow runs (native
   skip strings, pending required checks). Recheck the github.com page.
   https://docs.github.com/en/enterprise-server@3.5/actions/managing-workflow-runs/skipping-workflow-runs
+- [G3] T1, github.com. Skip workflow runs (native skip strings, the
+  skip-checks: trailer, pending required checks; push and pull_request
+  only). Supersedes the limit on [G2].
+  https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs
+- [G4] T1. Control workflow concurrency (a new queued run replaces the
+  pending one by default; queue property).
+  https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
+- [G5] T1. Trigger a workflow (events created with GITHUB_TOKEN do not
+  start new runs, with listed exceptions).
+  https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow
+- [G6] T1. merge_group event and payload: events-that-trigger-workflows
+  page, and GitHub's REST API description (merge-group schema:
+  base_sha is the merge group's parent commit).
+  https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows
+  https://github.com/github/rest-api-description
+- [G7] T1. Secure use reference (SHA pinning, workflow dependency
+  lockfiles, least-privilege GITHUB_TOKEN).
+  https://docs.github.com/en/actions/reference/security/secure-use
+- [G8] T1. Managing a merge queue (the tested merge group is what gets
+  merged).
+  https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue
+- [G9] T1. actions/checkout README (persist-credentials default and
+  opt-out).
+  https://github.com/actions/checkout
+- [G10] T1. Workflow syntax (jobs.<job_id>.needs skips dependents of a
+  failed job unless a condition such as always() is used).
+  https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
+- [G11] T1. GitHub-hosted runners reference (macos-14 is arm64).
+  https://docs.github.com/en/actions/reference/runners/github-hosted-runners
 
 ## Rust tooling
 
@@ -73,6 +107,52 @@ live in each log's "Known gaps").
   https://docs.rs/cargo-hakari/latest/src/cargo_hakari/docs/about.rs.html
   https://docs.rs/crate/cargo-hakari/latest/source/README.md
   https://docs.rs/cargo-hakari/latest/src/cargo_hakari/docs/publishing.rs.html
+- [R9] T1. Cargo configuration reference (build.rustflags: four
+  mutually exclusive sources, RUSTFLAGS ahead of config files).
+  https://doc.rust-lang.org/cargo/reference/config.html
+- [R10] T1. cargo check reference (--message-format short).
+  https://doc.rust-lang.org/cargo/commands/cargo-check.html
+- [R11] T1. nextest home page (doctests not supported; run
+  cargo test --doc). Supersedes the limit on [R5].
+  https://nexte.st/
+- [R12] T1. Rust 1.90.0 release post (LLD is the default linker on
+  x86_64-unknown-linux-gnu).
+  https://blog.rust-lang.org/2025/09/18/Rust-1.90.0/
+- [R13] T1. rust-analyzer troubleshooting FAQ, official site (build-lock
+  contention; separate target directory). Supersedes the mirror [R6].
+  https://rust-analyzer.github.io/book/faq.html
+- [R14] T1. Cargo build cache (build output is stored in the target
+  directory).
+  https://doc.rust-lang.org/cargo/reference/build-cache.html
+- [R15] T1. actionlint README (type checks of expressions).
+  https://github.com/rhysd/actionlint
+- [L1] T1, local command output, 2026-10-18. cargo 1.97.0:
+  cargo fmt --help lists -p, --all, and --check; in a scratch workspace
+  cargo fmt -p a --check exited 1 with a diff, and
+  cargo clippy --message-format short printed file:line:col messages.
+
+## Commit conventions and shell tools
+
+- [S1] T1. Conventional Commits 1.0.0 (prefix grammar; fix = PATCH,
+  feat = MINOR, ! or BREAKING CHANGE = MAJOR; other types have no
+  implicit SemVer effect).
+  https://www.conventionalcommits.org/en/v1.0.0/
+- [S2] T1. semantic-release commit-analyzer default release rules (perf
+  = patch; revert = patch).
+  https://github.com/semantic-release/commit-analyzer/blob/master/lib/default-release-rules.js
+- [S3] T1. @commitlint/config-conventional (type-enum: build, chore, ci,
+  docs, feat, fix, perf, refactor, revert, style, test).
+  https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional
+- [S4] T1. perldoc shasum (ships with Digest::SHA, a core Perl module
+  since 5.9.3 per corelist; -a 256).
+  https://perldoc.perl.org/shasum
+- [S5] T2. Guide stating macOS ships shasum by default.
+  https://techearl.com/verify-checksum-mac-command-line
+- [S6] T2. Blog showing macOS /bin/bash is 3.2.57.
+  https://jmmv.dev/2019/11/macos-bash-baggage.html
+- [S7] T1. git restore documentation (restores tracked paths from a
+  source such as HEAD).
+  https://git-scm.com/docs/git-restore
 
 ## Pointers not yet read
 
