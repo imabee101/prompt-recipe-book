@@ -3,9 +3,9 @@ title: Rust local check and build script (fast, gate, build modes)
 slug: rust-local-check-script
 target_model: claude-sonnet-5-5
 suggested_effort: high
-status: draft
+status: verified
 last_verified: 2026-10-18
-requires: shell with git, jq, cargo, cargo-nextest, cargo-hakari, shellcheck
+requires: shell with git, jq, cargo, cargo-nextest, cargo-hakari, shellcheck (clang and lld for linker settings)
 pairs_with: rust-ci-github-actions
 ---
 
@@ -22,8 +22,9 @@ Write one bash script, scripts/check, plus the config files it
 depends on: .cargo/config.toml, .config/nextest.toml, and
 .config/hakari.toml. The script checks and builds a Rust workspace
 with multiple components, and the workspace uses cargo-hakari (a
-workspace-hack crate). Then produce the deliverables listed at the
-end.
+workspace-hack crate). Fill <config> from the workspace itself:
+read every Cargo.toml and the output of cargo metadata --locked.
+Then produce the deliverables listed at the end.
 </task>
 
 <goal>
@@ -45,10 +46,13 @@ the first one.
    machine.
 2. Bash 3.2 compatible (macOS default) and Linux. Use
    set -euo pipefail. No associative arrays. Use jq for JSON.
-   The script must pass shellcheck with no warnings.
+   The script must pass shellcheck with no warnings. Reason: the
+   script must run unchanged on every developer machine.
 3. Fail fast. The first failing stage stops the script
    immediately, kills background lanes, and exits 1. The flag
    --no-fail-fast runs every stage and lists all failures.
+   Reason: the first failure is the signal; later stages only add
+   waiting.
 4. Order stages cheapest to costliest. Reason: the quickest
    failure surfaces first.
 5. Never run two cargo build, check, clippy, or test commands at
@@ -65,16 +69,29 @@ the first one.
    which the hakari lane enforces. Exception: the MSRV check uses
    target/check-msrv because it runs a different rustc.
 7. Every cargo command uses --locked. A stale Cargo.lock fails
-   the run.
-8. Never set the RUSTFLAGS environment variable. It replaces
-   rustflags from .cargo/config.toml and changes fingerprints.
-   Pass -D warnings to clippy after --.
-9. Never run cargo clean and never delete target dirs.
-10. Never hand-edit workspace-hack/Cargo.toml. Only cargo hakari
-    commands change it.
+   the run. Reason: CI uses --locked too, so a stale lock file
+   must fail here first.
+8. Never set the RUSTFLAGS environment variable. Pass -D warnings
+   to clippy after --. Reason: RUSTFLAGS replaces rustflags from
+   .cargo/config.toml and changes fingerprints.
+9. Keep the real repo's target dirs between runs: never run
+   cargo clean and never delete them. Reason: Cargo stores build
+   output there, and reusing it is what keeps reruns fast.
+10. Change workspace-hack/Cargo.toml only through cargo hakari
+    commands, never by hand. Reason: cargo hakari generates that
+    file, and the hakari lane fails on any drift from its output.
 11. Exit codes: 0 pass or skip, 1 check failed, 2 usage error or
-    missing tool.
-12. Add nothing that is not specified here.
+    missing tool. Reason: callers can tell a failed check from a
+    broken setup.
+12. Implement only what this prompt specifies. Reason: every extra
+    stage costs time on every run.
+13. Ask before deleting files, rewriting git history, pushing, or
+    committing in the real repo. Running the cargo hakari setup
+    commands in <hakari_setup> is allowed. Reason: these actions
+    are hard to reverse or visible to others.
+14. Never invent crate names, paths, triples, or versions. Reason:
+    an invented name makes the script fail on its first run. If you
+    cannot find one, stop and report which one.
 </hard_rules>
 
 <config>
@@ -91,11 +108,26 @@ TARGETS: triple, method ("cargo" or "zigbuild").
 Clippy and tests always run on the host triple. TARGETS are used
 only for gate cross-checks and build mode.
 
+<examples>
 <example>
+A service shipped on Linux and macOS:
 COMPONENTS: {"name":"api","crates":["api","api-types"],
+"targets":["x86_64-unknown-linux-gnu","aarch64-apple-darwin"]}
+TARGETS: {"triple":"aarch64-apple-darwin","method":"cargo"}
+</example>
+<example>
+A CLI cross-built for ARM Linux:
+COMPONENTS: {"name":"cli","crates":["cli"],
 "targets":["x86_64-unknown-linux-gnu","aarch64-unknown-linux-gnu"]}
 TARGETS: {"triple":"aarch64-unknown-linux-gnu","method":"zigbuild"}
 </example>
+<example>
+A shared library built only for the host:
+COMPONENTS: {"name":"core","crates":["core","core-types"],
+"targets":["x86_64-unknown-linux-gnu"]}
+TARGETS: {"triple":"x86_64-unknown-linux-gnu","method":"cargo"}
+</example>
+</examples>
 </config>
 
 <hakari>
@@ -141,7 +173,8 @@ the user.
 - Changed files = committed since base, plus staged, unstaged, and
   untracked (git ls-files --others --exclude-standard).
 - Skip rule: when the changed set is non-empty and every file
-  matches docs/**, **/*.md, or LICENSE*, print
+  matches docs/**, **/*.md, LICENSE*, or
+  .github/ISSUE_TEMPLATE/**, print
   "docs-only: nothing to check" and exit 0. --force disables
   skipping. In fast mode an empty changed set prints
   "no changes: nothing to check" and exits 0. Gate mode with an
@@ -160,9 +193,11 @@ the user.
 1. fast (default; run as scripts/check or scripts/check fast)
    a. preflight (target under 1 second): confirm git, jq,
       cargo-hakari (0.9.9 or newer), and cargo-nextest (0.9.89 or
-      newer) exist, confirm .config/hakari.toml exists, validate
-      Cargo.lock with cargo metadata --locked, run change
-      detection and the skip rule.
+      newer) exist, plus clang and lld when .cargo/config.toml sets
+      linker settings for a triple this run builds; confirm
+      .config/hakari.toml exists, validate Cargo.lock with
+      cargo metadata --locked, run change detection and the skip
+      rule.
    b. In the background: cargo fmt -p <affected> --check, plus the
       hakari lane when its trigger applies.
    c. clippy: cargo clippy -p <affected> --all-targets --locked
@@ -178,8 +213,9 @@ the user.
    trusted.
    a. preflight (same as fast).
    b. In the background: cargo fmt --all --check, the hakari
-      lane, and commit lint. Also cargo deny check, only when
-      Cargo.lock or any Cargo.toml changed.
+      lane, and commit lint. Also cargo deny check, only when a
+      changed file is any Cargo.toml, Cargo.lock, or
+      .config/hakari.toml.
       Commit lint: every commit subject in base..HEAD must match
       ^(feat|fix|perf|docs|chore|ci|test|style|refactor|build|revert)(\([^)]+\))?!?: .+
       and no subject or body may contain [skip ci], [ci skip],
@@ -217,6 +253,39 @@ the user.
      tests and says so in its last line.
 </modes>
 
+<config_files>
+.cargo/config.toml
+- [profile.dev]: debug = "line-tables-only"
+- [profile.dev.package."*"]: debug = false
+- Linker settings only for Linux triples other than
+  x86_64-unknown-linux-gnu whose method is cargo: linker = "clang"
+  with rustflags ["-C", "link-arg=--target=<triple>", "-C",
+  "link-arg=-fuse-ld=lld"]. The --target argument is required:
+  rustc does not pass the target to clang, so without it a
+  cross-link from another host links for the host architecture.
+  Cross-linking also needs the target's C library (on Ubuntu,
+  libc6-dev-arm64-cross for aarch64). Triples built
+  with cargo zigbuild get no linker settings, because zig is their
+  linker. If rust-toolchain.toml pins a release older than Rust
+  1.90, add the same settings for x86_64-unknown-linux-gnu.
+  Reason: from Rust 1.90, x86_64-unknown-linux-gnu links with
+  rust-lld, which rustup ships, while other Linux targets use the
+  slower system linker.
+
+.config/nextest.toml
+- [profile.fast]: fail-fast = { max-fail = 1, terminate =
+  "immediate" }, failure-output = "immediate-final"
+- [profile.gate]: fail-fast = { max-fail = 1 },
+  failure-output = "immediate-final",
+  slow-timeout = { period = "60s", terminate-after = 5 }
+  (comment: raise this if a legitimate test needs longer)
+- --no-fail-fast on the script maps to nextest --no-fail-fast.
+
+.config/hakari.toml
+- Generated by cargo hakari init, then edited as described in
+  <hakari_setup>.
+</config_files>
+
 <output_format>
 - Stage start: "[run] <stage> (<N> crates | workspace)"
 - Stage success: "[ok] <stage> <seconds>s"
@@ -238,36 +307,12 @@ the user.
   --force, --target (build mode only).
 </output_format>
 
-<config_files>
-.cargo/config.toml
-- [profile.dev]: debug = "line-tables-only"
-- [profile.dev.package."*"]: debug = false
-- Add linker settings only for non-x86_64 Linux triples that
-  appear in TARGETS: linker = "clang" with
-  rustflags ["-C", "link-arg=-fuse-ld=lld"]. Reason: x86_64 Linux
-  already uses a fast linker, while other Linux targets use the
-  slow system linker.
-
-.config/nextest.toml
-- [profile.fast]: fail-fast = { max-fail = 1, terminate =
-  "immediate" }, failure-output = "immediate-final"
-- [profile.gate]: fail-fast = { max-fail = 1 },
-  failure-output = "immediate-final",
-  slow-timeout = { period = "60s", terminate-after = 5 }
-  (comment: raise this if a legitimate test needs longer)
-- --no-fail-fast on the script maps to nextest --no-fail-fast.
-
-.config/hakari.toml
-- Generated by cargo hakari init, then edited as described in
-  <hakari_setup>.
-</config_files>
-
 <verification>
 If you have a shell:
 1. Run shellcheck on scripts/check and fix every warning.
-2. In the real repo, or a scratch workspace of three crates
-   (a, b depends on a, c depends on b) with a workspace-hack
-   crate, verify:
+2. In a scratch workspace in a temporary directory, never in the
+   real repo, with three crates (a, b depends on a, c depends on
+   b) and a workspace-hack crate, verify:
    - a docs-only change exits 0 immediately;
    - a change in a reports a, b, c as affected;
    - a deliberate clippy warning stops at clippy, never starts
@@ -283,9 +328,13 @@ If you have a shell:
    - a commit containing "[skip ci]" is rejected by the gate's
      commit lint;
    - gate mode passes on a clean tree.
-3. Report the actual output of each check.
+3. Run scripts/check gate in the real repo and report its result.
+4. Delete the scratch workspace.
+5. Report the actual output of each check.
 If you have no shell, state that the script is untested. Never
-claim a check passes without having run it.
+claim a check passes without having run it. When a check fails,
+fix the script, never the check, and make the script work for
+every workspace that matches <config>, not only the scratch one.
 </verification>
 
 <not_included>
@@ -296,7 +345,10 @@ installation, CI workflows, versioning, and releasing.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Produce them in this order:
+are reported. Keep working until then; stop to ask only when you
+cannot continue without the user or before an action in hard rule
+13. Then stop and report. Mention possible improvements at the end
+instead of making them. Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders.
 2. .cargo/config.toml, .config/nextest.toml, and
    .config/hakari.toml.
@@ -319,7 +371,7 @@ Paste the prompt into a Claude session opened in the Rust repository.
 The session needs the tools listed under requires to verify its work.
 Gate mode runs the same stages as rust-ci-github-actions.
 Run scripts/check while iterating and scripts/check gate before pushing.
-Status is draft: recheck the T0 claims in the log before relying on it.
+Re-run the log's claims before reuse if last_verified is over 90 days old.
 
 ## Provenance
 
