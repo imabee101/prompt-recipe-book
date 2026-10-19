@@ -155,8 +155,7 @@ three files into one, and installing tools.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then; the actions in hard rule 11
-are the only ones that wait for the user. Then stop and report.
+are reported. Keep working until then. Then stop and report.
 1. Per file: line counts before and after, and the final text.
 2. Per kept line: "Without this line, the agent would ... in ...".
 3. Per cut line: the line, the reason for the cut, and its
@@ -165,8 +164,6 @@ are the only ones that wait for the user. Then stop and report.
    line with its failure output.
 5. Backup paths and one restore command per file.
 6. The cuts marked "untested".
-7. Decisions: each choice you made that this prompt left open, with
-   the evidence behind it, one line each.
 </deliverables>
 ```
 

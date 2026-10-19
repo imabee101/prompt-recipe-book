@@ -348,8 +348,7 @@ installation, CI workflows, versioning, and releasing.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then; the actions in hard rule 13
-are the only ones that wait for the user. Then stop and report.
+are reported. Keep working until then. Then stop and report.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders
@@ -366,8 +365,6 @@ Produce them in this order:
    rust-analyzer.cargo.targetDir at its own directory so the IDE
    does not block the script; the first build is slower because
    workspace-hack compiles more dependencies up front.
-7. Decisions: each choice you made that this prompt left open, with
-   the evidence behind it, one line each.
 </deliverables>
 ```
 

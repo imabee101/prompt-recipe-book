@@ -376,8 +376,7 @@ and release dry runs in the merge queue.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then; the actions in hard rule 13
-are the only ones that wait for the user. Then stop and report.
+are reported. Keep working until then. Then stop and report.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders
@@ -395,8 +394,6 @@ Produce them in this order:
 7. One sentence confirming the one-time hakari setup
    (cargo hakari init, manage-deps, generate) is committed
    before this workflow is enabled.
-8. Decisions: each choice you made that this prompt left open, with
-   the evidence behind it, one line each.
 </deliverables>
 ```
 

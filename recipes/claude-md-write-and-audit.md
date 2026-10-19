@@ -266,11 +266,9 @@ file except CLAUDE.md and .gitignore. Do not add sections beyond
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then; the uncommitted-changes case
-in <task> and the actions in hard rule 12 are the only ones that
-wait for the user. Then stop and report. Mention possible
-improvements at the end instead of making them. Produce them in
-this order:
+are reported. Keep working until then. Then stop and report.
+Mention possible improvements at the end instead of making them.
+Produce them in this order:
 1. CLAUDE.md, 200 lines or fewer.
 2. Audit mode: the audit table. Create mode: a table of line group
    | evidence (the file read or command run).
@@ -280,8 +278,6 @@ this order:
 5. The verification output.
 6. Three sentences on maintenance: when to add, when to prune,
    and that root edits apply after /clear, /compact, or restart.
-7. Decisions: each choice you made that this prompt left open, with
-   the evidence behind it, one line each.
 </deliverables>
 ```
 
