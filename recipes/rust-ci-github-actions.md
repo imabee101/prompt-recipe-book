@@ -38,11 +38,11 @@ low and prevents multi-hour builds. The same stages exist in the
 local script scripts/check gate, so a green local gate predicts a
 green CI run.
 
-Carry the work through to the finished deliverables. Fit ci.yml to
-the repository as it stands: keep every existing feature working,
-and create only the files this prompt names. Where this prompt
-leaves room, choose the option that meets it with the least
-disruption to the repository.
+Carry the work through to the finished deliverables. Where the
+repository falls short of this, close the gap with the smallest
+change that keeps what the product does, and create only the files
+this prompt names. Where this prompt leaves room, choose the option
+that meets it with the least disruption to the repository.
 </goal>
 
 <hard_rules>
@@ -90,8 +90,8 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. Leave git history, existing files outside this prompt's list,
-    tags, and published packages as they are, and push nothing.
+12. Leave git history, tags, and published packages as they are,
+    and push nothing.
     Reason: these actions are hard to reverse or visible to
     others.
 13. Never invent crate names, paths, runner labels, versions, or
@@ -145,7 +145,7 @@ TARGETS: {"name":"linux","triple":"x86_64-unknown-linux-gnu",
 </config>
 
 <shared_config_files>
-Create these files only if they do not already exist. Both are
+Create these files, or bring existing ones in line. Both are
 shared with the local script scripts/check.
 
 .cargo/config.toml

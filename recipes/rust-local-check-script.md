@@ -38,11 +38,11 @@ every green fast run states what it did not verify. Gate mode runs
 the same stages as the CI pipeline, so a green local gate predicts
 a green CI run.
 
-Carry the work through to the finished deliverables. Fit
-scripts/check to the repository as it stands: keep every existing
-feature working, and create only the files this prompt names. Where
-this prompt leaves room, choose the option that meets it with the
-least disruption to the repository.
+Carry the work through to the finished deliverables. Where the
+repository falls short of this, close the gap with the smallest
+change that keeps what the product does, and create only the files
+this prompt names. Where this prompt leaves room, choose the option
+that meets it with the least disruption to the repository.
 </goal>
 
 <hard_rules>
@@ -92,8 +92,8 @@ the first one.
     broken setup.
 12. Implement only what this prompt specifies. Reason: every extra
     stage costs time on every run.
-13. Leave git history and existing files outside this prompt's
-    list as they are, and commit or push nothing in the real repo.
+13. Leave git history as it is, and commit or push nothing in the
+    real repo.
     Running the cargo hakari setup commands in <hakari_setup> is
     part of this job. Reason: these actions are hard to reverse or
     visible to others.
