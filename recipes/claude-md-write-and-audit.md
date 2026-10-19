@@ -269,7 +269,8 @@ Done when all of these are produced and the verification results
 are reported. Keep working until then; the uncommitted-changes case
 in <task> and the actions in hard rule 12 are the only ones that
 wait for the user. Then stop and report. Mention possible
-improvements at the end instead of making them. Produce them in this order:
+improvements at the end instead of making them. Produce them in
+this order:
 1. CLAUDE.md, 200 lines or fewer.
 2. Audit mode: the audit table. Create mode: a table of line group
    | evidence (the file read or command run).

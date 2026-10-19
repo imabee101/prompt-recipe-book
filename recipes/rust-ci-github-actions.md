@@ -377,7 +377,8 @@ and release dry runs in the merge queue.
 Done when all of these are produced and the verification results
 are reported. Keep working until then; the actions in hard rule 13
 are the only ones that wait for the user. Then stop and report.
-Mention possible improvements at the end instead of making them. Produce them in this order:
+Mention possible improvements at the end instead of making them.
+Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders
    other than UNRESOLVED: comments from hard rule 14.
 2. Any shared config file from <shared_config_files> that did not
