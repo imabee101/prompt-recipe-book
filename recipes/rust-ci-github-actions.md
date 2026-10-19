@@ -40,9 +40,9 @@ green CI run.
 
 Carry the work through to the finished deliverables. Fit ci.yml to
 the repository as it stands: keep every existing feature working,
-and create only the files this prompt names. Where this prompt leaves
-room, choose the option that meets it with the least disruption to
-the repository.
+and create only the files this prompt names. Where this prompt
+leaves room, choose the option that meets it with the least
+disruption to the repository.
 </goal>
 
 <hard_rules>
@@ -381,7 +381,8 @@ and release dry runs in the merge queue.
 <deliverables>
 Done when all of these are produced and the verification results
 are reported. Keep working until then. Then stop and report.
-Mention possible improvements at the end instead of making them. Produce them in this order:
+Mention possible improvements at the end instead of making them.
+Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders.
 2. Any shared config file from <shared_config_files> that did not
    already exist.

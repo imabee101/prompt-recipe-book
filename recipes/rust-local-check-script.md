@@ -40,9 +40,9 @@ a green CI run.
 
 Carry the work through to the finished deliverables. Fit
 scripts/check to the repository as it stands: keep every existing
-feature working, and create only the files this prompt names. Where this prompt leaves
-room, choose the option that meets it with the least disruption to
-the repository.
+feature working, and create only the files this prompt names. Where
+this prompt leaves room, choose the option that meets it with the
+least disruption to the repository.
 </goal>
 
 <hard_rules>
@@ -354,7 +354,8 @@ installation, CI workflows, versioning, and releasing.
 <deliverables>
 Done when all of these are produced and the verification results
 are reported. Keep working until then. Then stop and report.
-Mention possible improvements at the end instead of making them. Produce them in this order:
+Mention possible improvements at the end instead of making them.
+Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders.
 2. .cargo/config.toml, .config/nextest.toml, and
    .config/hakari.toml.

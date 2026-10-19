@@ -36,9 +36,9 @@ makes Claude ignore the rules that matter.
 
 Carry the work through to the finished deliverables. Fit CLAUDE.md
 to the repository as it stands: keep every existing feature working,
-and create only the files this prompt names. Where this prompt leaves
-room, choose the option that meets it with the least disruption to
-the repository.
+and create only the files this prompt names. Where this prompt
+leaves room, choose the option that meets it with the least
+disruption to the repository.
 </goal>
 
 <hard_rules>
@@ -273,7 +273,8 @@ file except CLAUDE.md and .gitignore. Do not add sections beyond
 <deliverables>
 Done when all of these are produced and the verification results
 are reported. Keep working until then. Then stop and report.
-Mention possible improvements at the end instead of making them. Produce them in this order:
+Mention possible improvements at the end instead of making them.
+Produce them in this order:
 1. CLAUDE.md, 200 lines or fewer.
 2. Audit mode: the audit table. Create mode: a table of line group
    | evidence (the file read or command run).

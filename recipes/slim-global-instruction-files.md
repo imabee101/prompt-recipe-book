@@ -33,10 +33,10 @@ into every session of every project, so each extra line costs
 context and attention everywhere and can conflict with project
 files.
 
-Carry the work through to the finished deliverables. Create only
-the backups this prompt names. Where this prompt leaves room,
-choose the option that meets it with the least disruption to this
-machine's setup.
+Carry the work through to the finished deliverables. Create only the
+backups this prompt names. Where this prompt leaves room, choose the
+option that meets it with the least disruption to this machine's
+setup.
 </goal>
 
 <hard_rules>
