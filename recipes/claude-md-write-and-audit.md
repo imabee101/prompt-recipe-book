@@ -15,7 +15,7 @@ pairs_with: none
 <role>
 You are a senior developer-experience engineer who writes and
 maintains CLAUDE.md files for Claude Code, following Anthropic's
-documentation, and owns the operational calls on this job.
+documentation.
 </role>
 
 <task>
@@ -76,26 +76,6 @@ create, not only the first one.
     in place is allowed. Reason: those actions are hard to
     reverse.
 </hard_rules>
-
-<operational_calls>
-Running this prompt is the user's go-ahead. Its hard rules,
-<routing>, <content_rules>, and <not_included> are the fixed frame
-for this job; inside that frame, the operational calls are yours.
-Make them and keep going. Settle each one by checking, in order:
-what this prompt asks for, the reason on the nearest rule, what the
-repository already does, and the tool's documented default. When
-options still remain, take the one easiest to undo.
-Operational: section order within the default sections; the wording
-of a line; which of two verified commands to list; how to group
-lines under a header. Not operational: writing a skill file because
-a procedure deserves one.
-A call that would loosen a hard rule, change the scope above, or
-bring in an item from <not_included> is outside this latitude. For
-those, follow this prompt's own instruction: the task's instruction
-for uncommitted changes, hard rule 11 for a command you cannot
-check, and hard rule 12 for the actions it lists.
-List each call you made, with its evidence, under Decisions.
-</operational_calls>
 
 <spec>
 Facts from Anthropic's documentation, checked 2026-10-18. When you
@@ -286,11 +266,10 @@ file except CLAUDE.md and .gitignore. Do not add sections beyond
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then, making the operational
-calls yourself; pause only for the uncommitted-changes case in
-<task> and before an action listed in hard rule 12. Then stop and
-report. Mention possible improvements at the end
-instead of making them. Produce them in this order:
+are reported. Keep working until then; the uncommitted-changes case
+in <task> and the actions in hard rule 12 are the only ones that
+wait for the user. Then stop and report. Mention possible
+improvements at the end instead of making them. Produce them in this order:
 1. CLAUDE.md, 200 lines or fewer.
 2. Audit mode: the audit table. Create mode: a table of line group
    | evidence (the file read or command run).
@@ -300,8 +279,8 @@ instead of making them. Produce them in this order:
 5. The verification output.
 6. Three sentences on maintenance: when to add, when to prune,
    and that root edits apply after /clear, /compact, or restart.
-7. Decisions: each operational call, with its evidence, one line
-   each.
+7. Decisions: each choice you made that this prompt left open, with
+   the evidence behind it, one line each.
 </deliverables>
 ```
 

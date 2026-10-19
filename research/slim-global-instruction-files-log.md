@@ -1,7 +1,7 @@
 # Research log: slim-global-instruction-files
 
 Recipe: ../recipes/slim-global-instruction-files.md
-Checked: 2026-10-19 (operational-calls revision); first checked 2026-10-18
+Checked: 2026-10-19 (stop-points revision); first checked 2026-10-18
 Tiers: T1 = official or primary, T2 = secondary, T0 = unverified.
 
 ## Requirements
@@ -23,9 +23,11 @@ This request stores a prompt; it does not execute the embedded machine audit.
    and exclusions stay fixed, and judgment never reopens them.
 7. 2026-10-19: In an existing project, work around what is already there
    and keep existing features intact; choose the least destructive option.
-8. 2026-10-19: Make the role a little more authoritative, and follow
-   Anthropic's prompting guidance. (An earlier revision that granted broad
-   authority was reverted at the user's request.)
+8. 2026-10-19: Prefer removing constraints that block
+   operational choices over adding a grant of authority; follow
+   Anthropic's prompting guidance. Two earlier revisions (a broad
+   authority grant, then a separate operational-calls section) were
+   reverted at the user's request.
 
 ## Findings
 
@@ -49,11 +51,8 @@ This request stores a prompt; it does not execute the embedded machine audit.
 | A single probe can establish the behavioral value of a removed category or line. | Unverified evaluation assumption | none | T0 | Preserved protocol; single samples do not establish causality or reliability. |
 | Explicit scope, examples, reasons, and stopping conditions are appropriate prompt structures. | Confirmed in reviewed guidance | [A1], [A2] | T1 | Retained supplied XML structure and examples. |
 | high effort is a reasonable initial setting for harder, longer agentic work. | Confirmed as starting guidance, not an evaluation of this recipe | [A2] | T1 | Set suggested_effort: high. |
-| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | operational_calls section: operational choices are made, not asked |
-| Giving the reason behind an instruction helps Claude apply it to unnamed cases | Confirmed | [A1] | T1 | Operational calls are settled by the reason on the nearest rule |
-| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables keep working with no general ask clause; hard rule 11 and the existing escalation rules (8 and 11) stay unchanged |
-| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role adds ownership of operational calls only |
-| Examples, including contrasting ones, steer behavior more reliably than description alone | Confirmed | [A1] | T1 | One operational versus not-operational contrast per recipe |
+| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the open-ended ask clause; only the actions in hard rule 11 wait for the user, and that rule is unchanged |
+| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No authority section added; the blocking stop points were turned into report-and-continue, so choices the prompt leaves open get made |
 
 ## Known gaps
 

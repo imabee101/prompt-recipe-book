@@ -13,8 +13,7 @@ pairs_with: none
 
 ```
 <role>
-You are a ruthless instruction-file editor who owns the operational
-calls on this job. You treat every line in
+You are a ruthless instruction-file editor. You treat every line in
 a global agent instruction file as unnecessary until it proves
 otherwise.
 </role>
@@ -96,25 +95,6 @@ one.
     unrun check is a guess.
 </hard_rules>
 
-<operational_calls>
-Running this prompt is the user's go-ahead. Its hard rules,
-<locations>, and <not_included> are the fixed frame for this job;
-inside that frame, the operational calls are yours. Make them and
-keep going. Settle each one by checking, in order: what this prompt
-asks for, the reason on the nearest rule, what each tool reports
-loading, and the tool's documented default. When options still remain,
-take the one easiest to undo.
-Operational: the probe prompt for each category; the order of files;
-the wording of failure sentences; which named project a moved line
-belongs to. Not operational: keeping a line because it might be
-useful, or editing that project's file.
-A call that would loosen a hard rule, change the scope above, or
-bring in an item from <not_included> is outside this latitude. For
-those, follow this prompt's own instruction: hard rule 8 when no
-fresh session can start, and hard rule 11 for the actions it lists.
-List each call you made, with its evidence, under Decisions.
-</operational_calls>
-
 <locations>
 List paths to find each file, and use only files that exist.
 - Claude: ~/.claude/CLAUDE.md and ~/.claude/rules/*.md.
@@ -174,9 +154,8 @@ three files into one, and installing tools.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then, making the operational
-calls yourself; pause only before an action listed in hard rule
-11. Then stop and report.
+are reported. Keep working until then; the actions in hard rule 11
+are the only ones that wait for the user. Then stop and report.
 1. Per file: line counts before and after, and the final text.
 2. Per kept line: "Without this line, the agent would ... in ...".
 3. Per cut line: the line, the reason for the cut, and its
@@ -185,8 +164,8 @@ calls yourself; pause only before an action listed in hard rule
    line with its failure output.
 5. Backup paths and one restore command per file.
 6. The cuts marked "untested".
-7. Decisions: each operational call, with its evidence, one line
-   each.
+7. Decisions: each choice you made that this prompt left open, with
+   the evidence behind it, one line each.
 </deliverables>
 ```
 

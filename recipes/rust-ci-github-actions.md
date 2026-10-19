@@ -14,8 +14,7 @@ pairs_with: rust-local-check-script
 ```
 <role>
 You are a senior CI/release engineer who writes production-grade
-GitHub Actions for large Rust monorepos and owns the operational
-calls on this job.
+GitHub Actions for large Rust monorepos.
 </role>
 
 <task>
@@ -72,7 +71,8 @@ rule and its reason.
    (.github/workflows/actions.lock). Reason: supply-chain safety;
    the lockfile is in public preview and subject to change, and
    GitHub recommends SHA pins where no lockfile is used. If the
-   repository already has that lockfile, stop and report it.
+   repository already has that lockfile, leave it as it is, pin by
+   SHA anyway, and report it.
 9. Every cargo command uses --locked. Reason: CI must fail if
    Cargo.lock is out of date.
 10. Cheap jobs run first. Each expensive job lists the cheaper
@@ -85,41 +85,19 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. If any rule conflicts with real GitHub behavior, stop and
-    state the conflict. Reason: a silent workaround hides a broken
-    rule from the user.
+12. If any rule conflicts with real GitHub behavior, state the
+    conflict in the report, leave the rule as written, and finish
+    everything the conflict does not touch. Reason: a silent
+    workaround hides a broken rule from the user.
 13. Ask before deleting files, rewriting git history, pushing,
     creating tags, or publishing. Reason: these actions are hard
     to reverse or visible to others.
 14. Never invent crate names, paths, runner labels, versions, or
     action SHAs. Reason: an invented SHA or crate name breaks the
-    workflow on its first run. If you cannot look one up, stop and
-    report which one.
+    workflow on its first run. If you cannot look one up, mark that
+    spot with a comment starting UNRESOLVED: that names the value,
+    finish the rest, and report which one.
 </hard_rules>
-
-<operational_calls>
-Running this prompt is the user's go-ahead. Its hard rules, the
-files it names, and <not_included> are the fixed frame for this job;
-inside that frame, the operational calls are yours. Make them and
-keep going. Settle each one by checking, in order: what this prompt
-asks for, the reason on the nearest rule, what the repository
-already does, and the tool's documented default. When options still
-remain, take the one easiest to undo.
-Operational: job, step, and output names; order within a job; which
-of two commands meets the same rule; comment wording; how ci.yml
-fits the repository's layout. Not operational: adding a schedule
-trigger because nightly builds look useful.
-A call that would loosen a hard rule, change the scope above, or
-bring in an item from <not_included> is outside this latitude. For
-those, follow this prompt's own instruction: hard rule 12 for a
-conflict with GitHub, hard rule 14 for a value you cannot find, and
-hard rule 13 for the actions it lists.
-In an existing repository, build around what is there: keep existing
-features working, and leave files outside this prompt's list as they
-are. If one of those files conflicts with a hard rule, name it under
-Decisions and leave it unchanged.
-List each call you made, with its evidence, under Decisions.
-</operational_calls>
 
 <config>
 Put this at the top of the file as one JSON block in env. Adding a
@@ -397,11 +375,11 @@ and release dry runs in the merge queue.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then, making the operational
-calls yourself; pause only before an action listed in hard rule
-13. Then stop and report. Mention possible improvements at the end
-instead of making them. Produce them in this order:
-1. The complete ci.yml with brief comments and no placeholders.
+are reported. Keep working until then; the actions in hard rule 13
+are the only ones that wait for the user. Then stop and report.
+Mention possible improvements at the end instead of making them. Produce them in this order:
+1. The complete ci.yml with brief comments and no placeholders
+   other than UNRESOLVED: comments from hard rule 14.
 2. Any shared config file from <shared_config_files> that did not
    already exist.
 3. A table: job | trigger event | components and targets covered |
@@ -415,8 +393,8 @@ instead of making them. Produce them in this order:
 7. One sentence confirming the one-time hakari setup
    (cargo hakari init, manage-deps, generate) is committed
    before this workflow is enabled.
-8. Decisions: each operational call, with its evidence, one line
-   each.
+8. Decisions: each choice you made that this prompt left open, with
+   the evidence behind it, one line each.
 </deliverables>
 ```
 
