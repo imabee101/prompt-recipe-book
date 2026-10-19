@@ -90,8 +90,8 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. Leave git history, tags, and published packages as they are,
-    and push nothing.
+12. Leave git history, tags, and crate versions already on
+    crates.io as they are, and push nothing.
     Reason: these actions are hard to reverse or visible to
     others.
 13. Never invent crate names, paths, runner labels, versions, or
