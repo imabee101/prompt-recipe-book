@@ -4,7 +4,7 @@ slug: rust-ci-github-actions
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 requires: shell with actionlint (optional)
 pairs_with: rust-local-check-script
 ---
@@ -13,8 +13,9 @@ pairs_with: rust-local-check-script
 
 ```
 <role>
-You are a senior CI/release engineer who writes production-grade
-GitHub Actions for large Rust monorepos.
+You are a principal CI/release engineer who has built and run
+production GitHub Actions pipelines for large Rust monorepos through
+years of releases.
 </role>
 
 <task>
@@ -36,6 +37,12 @@ only when the event and the diff make it relevant. This keeps cost
 low and prevents multi-hour builds. The same stages exist in the
 local script scripts/check gate, so a green local gate predicts a
 green CI run.
+
+Carry the work through to the finished deliverables. Fit ci.yml to
+the repository as it stands: keep every existing feature working,
+and create only the files this prompt names. Where this prompt leaves
+room, choose the option that meets it with the least disruption to
+the repository.
 </goal>
 
 <hard_rules>
@@ -87,9 +94,10 @@ rule and its reason.
 12. If any rule conflicts with real GitHub behavior, stop and
     state the conflict. Reason: a silent workaround hides a broken
     rule from the user.
-13. Ask before deleting files, rewriting git history, pushing,
-    creating tags, or publishing. Reason: these actions are hard
-    to reverse or visible to others.
+13. Leave git history, existing files outside this prompt's list,
+    tags, and published packages as they are, and push nothing.
+    Reason: these actions are hard to reverse or visible to
+    others.
 14. Never invent crate names, paths, runner labels, versions, or
     action SHAs. Reason: an invented SHA or crate name breaks the
     workflow on its first run. If you cannot look one up, stop and
@@ -372,10 +380,8 @@ and release dry runs in the merge queue.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then; stop to ask only when you
-cannot continue without the user or before an action in hard rule
-13. Then stop and report. Mention possible improvements at the end
-instead of making them. Produce them in this order:
+are reported. Keep working until then. Then stop and report.
+Mention possible improvements at the end instead of making them. Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders.
 2. Any shared config file from <shared_config_files> that did not
    already exist.

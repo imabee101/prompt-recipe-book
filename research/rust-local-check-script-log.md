@@ -15,6 +15,11 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 6. Include cargo-hakari.
 7. Keep the prompt in parity with the CI recipe: same stages, flags,
    regexes, and version minimums.
+8. 2026-10-19: Keep every specification as written. Remove wording that
+   invites questions so the session acts; it creates no files beyond those
+   the prompt names, keeps existing project features, fits the work to the
+   project, and picks the least disruptive option within the constraints.
+   Make the role read as more senior through experience.
 
 ## Findings
 
@@ -46,6 +51,9 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | cargo hakari generates workspace-hack and checks drift with generate --diff | Confirmed | [R8] | T1 | Rule 10 reason |
 | cargo deny trigger and docs-only globs differed from the CI recipe | Corrected for parity: both use Cargo.toml, Cargo.lock, .config/hakari.toml, and docs/**, **/*.md, LICENSE*, .github/ISSUE_TEMPLATE/** | none (parity) | n/a | change_detection and gate stage b |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
+| Sonnet 5.5 can stop to check in before work is done; the fix is a keep-working instruction | Confirmed | [A2] | T1 | Ask clause removed from deliverables; ask-before rules restated as the same limits without asking |
+| Explaining the intent behind instructions helps Claude apply them to unnamed cases | Confirmed | [A1] | T1 | Goal adds one paragraph: finish the deliverables, fit the work to what exists, least disruptive option |
+| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience |
 
 ## Known gaps
 

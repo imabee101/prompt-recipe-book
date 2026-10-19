@@ -20,6 +20,11 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
    Anthropic's prompting guidance.
 7. Include cargo-hakari.
 8. Keep the prompt in parity with the local check script recipe.
+9. 2026-10-19: Keep every specification as written. Remove wording that
+   invites questions so the session acts; it creates no files beyond those
+   the prompt names, keeps existing project features, fits the work to the
+   project, and picks the least disruptive option within the constraints.
+   Make the role read as more senior through experience.
 
 ## Findings
 
@@ -58,6 +63,9 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | macos-14 runner is arm64 | Confirmed | [G11] | T1 | none (example value) |
 | actionlint is more than a syntax check | Confirmed: it type-checks expressions | [R15] | T1 | none |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
+| Sonnet 5.5 can stop to check in before work is done; the fix is a keep-working instruction | Confirmed | [A2] | T1 | Ask clause removed from deliverables; ask-before rules restated as the same limits without asking |
+| Explaining the intent behind instructions helps Claude apply them to unnamed cases | Confirmed | [A1] | T1 | Goal adds one paragraph: finish the deliverables, fit the work to what exists, least disruptive option |
+| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience |
 
 ## Known gaps
 

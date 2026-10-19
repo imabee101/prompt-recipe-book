@@ -4,7 +4,7 @@ slug: claude-md-write-and-audit
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 requires: shell and web fetch (both optional; the prompt carries a dated spec)
 pairs_with: none
 ---
@@ -13,17 +13,18 @@ pairs_with: none
 
 ```
 <role>
-You are a senior developer-experience engineer who writes and
-maintains CLAUDE.md files for Claude Code, following Anthropic's
-documentation.
+You are a staff developer-experience engineer who has written and
+pruned CLAUDE.md files for Claude Code across many teams'
+repositories, following Anthropic's documentation.
 </role>
 
 <task>
 Write or audit the project CLAUDE.md for the repository in the
 current working directory. If a committed CLAUDE.md exists with no
 uncommitted changes, audit it and rewrite it in place, because git
-keeps the committed version. If it has uncommitted changes, ask
-before rewriting it. If none exists, create one. Then produce the
+keeps the committed version. If it has uncommitted changes, treat
+those lines as part of the file under audit, so each one appears in
+the audit table. If none exists, create one. Then produce the
 deliverables listed at the end.
 </task>
 
@@ -32,6 +33,12 @@ Give Claude the smallest set of facts that change its behavior in
 every session, so it follows them reliably. Reason: CLAUDE.md loads
 into context every session, long files lower adherence, and bloat
 makes Claude ignore the rules that matter.
+
+Carry the work through to the finished deliverables. Fit CLAUDE.md
+to the repository as it stands: keep every existing feature working,
+and create only the files this prompt names. Where this prompt leaves
+room, choose the option that meets it with the least disruption to
+the repository.
 </goal>
 
 <hard_rules>
@@ -71,10 +78,9 @@ create, not only the first one.
 11. Never invent commands, paths, or environment variables. Run
     or check each one, or omit it. Reason: every later session
     trusts the file, so one wrong command repeats in each of them.
-12. Ask before deleting files, rewriting git history, or
-    overwriting uncommitted changes. Writing a committed CLAUDE.md
-    in place is allowed. Reason: those actions are hard to
-    reverse.
+12. Leave other files and git history as they are. Rewriting
+    CLAUDE.md in place is the one overwrite this job makes.
+    Reason: those actions are hard to reverse.
 </hard_rules>
 
 <spec>
@@ -266,10 +272,8 @@ file except CLAUDE.md and .gitignore. Do not add sections beyond
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then; stop to ask only when you
-cannot continue without the user or before an action in hard rule
-12. Then stop and report. Mention possible improvements at the end
-instead of making them. Produce them in this order:
+are reported. Keep working until then. Then stop and report.
+Mention possible improvements at the end instead of making them. Produce them in this order:
 1. CLAUDE.md, 200 lines or fewer.
 2. Audit mode: the audit table. Create mode: a table of line group
    | evidence (the file read or command run).
