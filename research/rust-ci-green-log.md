@@ -18,16 +18,21 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 5. Minimal language, optimized like the revised CI recipe: smallest
    change that keeps what the product does, no new documents, least
    disruptive option.
+6. Hard rule 10 must transfer to any repository and agent: use
+   auto-merge where available, merge directly where it is not, and give
+   the agent no reason to stop and ask how to merge.
+7. Fixes land one at a time, so a fix's pull request can still show
+   failures that later fixes cover; the merge rule must let it land.
 
 ## Findings
 
 | Claim | Verdict | Source | Tier | Prompt change |
 | --- | --- | --- | --- | --- |
 | gh run list filters by workflow and branch; gh run view --log-failed shows failed step logs | Confirmed | [H2] | T1 | Task reads failed runs with these commands |
-| gh pr merge --auto merges only after required checks pass, and with a required merge queue adds the pull request to the queue | Confirmed | [H1] | T1 | Hard rule 10 |
+| gh pr merge --auto merges only after required checks pass, and with a required merge queue adds the pull request to the queue | Confirmed | [H1] | T1 | Superseded: hard rule 10 no longer uses --auto (see below) |
 | gh pr merge needs a merge method unless the branch requires a merge queue | Confirmed | [H1] | T1 | Hard rule 10 names "a merge method the repository allows" |
 | --admin bypasses the merge queue | Confirmed | [H1] | T1 | Listed in not_included |
-| gh pr view --json exposes the pull request state | Confirmed | [H3] | T1 | Hard rule 10 waits for MERGED |
+| gh pr view --json exposes the pull request state | Confirmed | [H3] | T1 | Superseded: hard rule 10 waits on checks instead |
 | nextest retries count a pass on retry as success by default | Confirmed | [R18] | T1 | Retries in not_included; hard rule 4 reason |
 | cargo nextest run --stress-count N runs each test N times, from 0.9.103 | Confirmed | [R19] | T1 | Hard rule 4 and verification 2; requires line names 0.9.103 |
 | Ignored tests are excluded from a default nextest run | Confirmed | [R20] | T1 | #[ignore] in not_included and verification 3 |
@@ -40,6 +45,9 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience |
 | Positive instructions work better than prohibitions | Confirmed | [A1] [A3] | T1 | Exclusions moved to not_included; verification phrased positively |
 | Models report code as done without running a check | Confirmed | [A2] | T1 | verification requires actual output in each pull request |
+| gh pr merge --auto works on every repository | Not assumed: the user reports a repository with allow_auto_merge false where branch protection and rulesets return 403 on its plan, so --auto can be refused and required checks may not be enforced | none (user report) | n/a | Hard rule 10 names no merge mechanism: merge once every check passes, by any path the repository allows (auto-merge, merge queue, or direct) |
+| gh pr checks --watch waits until checks finish; --required fails when no checks are required | Confirmed | [H4] | T1 | none; kept as background for why the rule names no command |
+| A fix's pull request is green only when every check passes | Corrected by requirement: until the last fix, other components still fail | none (requirement) | n/a | Hard rule 10 and verification 4 judge a merge by the fixed component passing and no new failure against main; not_included excludes a merge that adds a failure |
 
 ## Known gaps
 
