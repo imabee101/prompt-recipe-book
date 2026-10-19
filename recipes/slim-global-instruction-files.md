@@ -159,8 +159,8 @@ three files into one, and installing tools.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Then stop and report.
+Done when all of these are produced, including the verification
+results. Keep working until then.
 1. Per file: line counts before and after, and the final text.
 2. Per kept line: "Without this line, the agent would ... in ...".
 3. Per cut line: the line, the reason for the cut, and its

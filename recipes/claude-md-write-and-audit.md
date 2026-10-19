@@ -271,8 +271,8 @@ file except CLAUDE.md and .gitignore. Do not add sections beyond
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then. Then stop and report.
+Done when all of these are produced, including the verification
+results. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. CLAUDE.md, 200 lines or fewer.

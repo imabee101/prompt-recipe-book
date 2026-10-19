@@ -77,8 +77,7 @@ rule and its reason.
    Create no workflow dependency lockfile
    (.github/workflows/actions.lock). Reason: supply-chain safety;
    the lockfile is in public preview and subject to change, and
-   GitHub recommends SHA pins where no lockfile is used. If the
-   repository already has that lockfile, stop and report it.
+   GitHub recommends SHA pins where no lockfile is used.
 9. Every cargo command uses --locked. Reason: CI must fail if
    Cargo.lock is out of date.
 10. Cheap jobs run first. Each expensive job lists the cheaper
@@ -91,17 +90,13 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. If any rule conflicts with real GitHub behavior, stop and
-    state the conflict. Reason: a silent workaround hides a broken
-    rule from the user.
-13. Leave git history, existing files outside this prompt's list,
+12. Leave git history, existing files outside this prompt's list,
     tags, and published packages as they are, and push nothing.
     Reason: these actions are hard to reverse or visible to
     others.
-14. Never invent crate names, paths, runner labels, versions, or
+13. Never invent crate names, paths, runner labels, versions, or
     action SHAs. Reason: an invented SHA or crate name breaks the
-    workflow on its first run. If you cannot look one up, stop and
-    report which one.
+    workflow on its first run.
 </hard_rules>
 
 <config>
@@ -379,8 +374,8 @@ and release dry runs in the merge queue.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then. Then stop and report.
+Done when all of these are produced, including the verification
+results. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders.

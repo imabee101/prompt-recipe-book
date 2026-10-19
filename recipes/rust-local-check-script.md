@@ -98,8 +98,7 @@ the first one.
     part of this job. Reason: these actions are hard to reverse or
     visible to others.
 14. Never invent crate names, paths, triples, or versions. Reason:
-    an invented name makes the script fail on its first run. If you
-    cannot find one, stop and report which one.
+    an invented name makes the script fail on its first run.
 </hard_rules>
 
 <config>
@@ -352,8 +351,8 @@ installation, CI workflows, versioning, and releasing.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then. Then stop and report.
+Done when all of these are produced, including the verification
+results. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders.
