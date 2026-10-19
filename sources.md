@@ -154,6 +154,41 @@ live in each log's "Known gaps").
   cargo zigbuild for aarch64 linked with zig's LLD 22.1.8 and ran, both
   without linker settings and with the clang settings present.
 
+- [R18] T1, project docs source, fetched 2026-10-19 (nexte.st did not
+  resolve here). Retries: a test that passes on retry is marked flaky
+  and counts as success by default.
+  https://github.com/nextest-rs/nextest/blob/main/site/src/docs/features/retries.md
+- [R19] T1, project docs source, fetched 2026-10-19. Stress tests:
+  --stress-count=N runs each test N times (cargo-nextest 0.9.103 or
+  newer).
+  https://github.com/nextest-rs/nextest/blob/main/site/src/docs/features/stress-tests.md
+- [R20] T1, project docs source, fetched 2026-10-19. Running tests:
+  --run-ignored only|all (ignored tests are excluded by default) and
+  --no-fail-fast.
+  https://github.com/nextest-rs/nextest/blob/main/site/src/docs/running.md
+- [L4] T1, local command output, 2026-10-19. cargo 1.97.0
+  cargo update --help: the package is a positional SPEC argument, no
+  -p flag is listed, and --precise <PRECISE> updates SPEC to exactly
+  that version.
+
+## GitHub CLI
+
+- [H1] T1, project source, fetched 2026-10-19 from GitHub raw (the
+  cli.github.com manual host did not resolve here). gh pr merge help:
+  --auto merges only after requirements are met; with a required
+  merge queue no strategy is needed, and passed checks add the pull
+  request to the queue; --admin bypasses the queue. Matches local
+  gh 2.89.0 --help.
+  https://github.com/cli/cli/blob/trunk/pkg/cmd/pr/merge/merge.go
+- [H2] T1, project source, fetched 2026-10-19. gh run view --log-failed
+  shows the log for failed steps; gh run list filters by --workflow and
+  --branch.
+  https://github.com/cli/cli/blob/trunk/pkg/cmd/run/view/view.go
+  https://github.com/cli/cli/blob/trunk/pkg/cmd/run/list/list.go
+- [H3] T1, project source, fetched 2026-10-19. gh pr view --json exposes
+  the state field.
+  https://github.com/cli/cli/blob/trunk/pkg/cmd/pr/view/view.go
+
 ## Commit conventions and shell tools
 
 - [S1] T1. Conventional Commits 1.0.0 (prefix grammar; fix = PATCH,
