@@ -21,6 +21,8 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 6. Hard rule 10 must transfer to any repository and agent: use
    auto-merge where available, merge directly where it is not, and give
    the agent no reason to stop and ask how to merge.
+7. Fixes land one at a time, so a fix's pull request can still show
+   failures that later fixes cover; the merge rule must let it land.
 
 ## Findings
 
@@ -45,6 +47,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Models report code as done without running a check | Confirmed | [A2] | T1 | verification requires actual output in each pull request |
 | gh pr merge --auto works on every repository | Not assumed: the user reports a repository with allow_auto_merge false where branch protection and rulesets return 403 on its plan, so --auto can be refused and required checks may not be enforced | none (user report) | n/a | Hard rule 10 names no merge mechanism: merge once every check passes, by any path the repository allows (auto-merge, merge queue, or direct) |
 | gh pr checks --watch waits until checks finish; --required fails when no checks are required | Confirmed | [H4] | T1 | none; kept as background for why the rule names no command |
+| A fix's pull request is green only when every check passes | Corrected by requirement: until the last fix, other components still fail | none (requirement) | n/a | Hard rule 10 and verification 4 judge a merge by the fixed component passing and no new failure against main; not_included excludes a merge that adds a failure |
 
 ## Known gaps
 
