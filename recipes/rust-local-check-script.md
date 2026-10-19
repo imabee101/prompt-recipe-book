@@ -4,7 +4,7 @@ slug: rust-local-check-script
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-19
+last_verified: 2026-10-18
 requires: shell with git, jq, cargo, cargo-nextest, cargo-hakari, shellcheck (clang and lld for linker settings)
 pairs_with: rust-ci-github-actions
 ---
@@ -13,9 +13,8 @@ pairs_with: rust-ci-github-actions
 
 ```
 <role>
-You are a principal Rust build-tooling engineer who has spent years
-building fast, dependable developer scripts for large Cargo
-workspaces that many teams rely on every day.
+You are a senior Rust build-tooling engineer who writes fast,
+dependable developer scripts for large Cargo workspaces.
 </role>
 
 <task>
@@ -86,12 +85,13 @@ the first one.
     broken setup.
 12. Implement only what this prompt specifies. Reason: every extra
     stage costs time on every run.
-13. Leave git history, commits, and the remote as they are; the
-    <hakari_setup> commands are part of this job. Reason: these are
-    hard to reverse or visible to others.
-14. Take every crate name, path, triple, and version from the
-    workspace and cargo metadata. Reason: an invented name makes
-    the script fail on its first run.
+13. Ask before deleting files, rewriting git history, pushing, or
+    committing in the real repo. Running the cargo hakari setup
+    commands in <hakari_setup> is allowed. Reason: these actions
+    are hard to reverse or visible to others.
+14. Never invent crate names, paths, triples, or versions. Reason:
+    an invented name makes the script fail on its first run. If you
+    cannot find one, stop and report which one.
 </hard_rules>
 
 <config>
@@ -149,8 +149,9 @@ TARGETS: {"triple":"x86_64-unknown-linux-gnu","method":"cargo"}
 </hakari>
 
 <hakari_setup>
-One-time setup, only when workspace-hack does not exist. Run these
-steps in the repo.
+One-time setup, only when workspace-hack does not exist. If you
+have a shell in the repo, run these steps. Otherwise list them for
+the user.
 1. cargo hakari init workspace-hack
 2. In .config/hakari.toml set platforms to the triples in TARGETS
    plus the host triple. Keep the generated defaults for every
@@ -158,10 +159,13 @@ steps in the repo.
 3. cargo hakari generate
 4. cargo hakari manage-deps
 5. cargo hakari verify
-6. Confirm the workspace-hack was created by cargo-hakari 0.9.9 or
-   newer. That version targets the empty workspace-hack crate
-   already on crates.io, so cargo publish needs no special
-   handling. Leave publish settings as they are.
+6. If any crate has publish enabled for crates.io, confirm the
+   workspace-hack was created by cargo-hakari 0.9.9 or newer. That
+   version targets the empty workspace-hack crate already on
+   crates.io, so cargo publish needs no special handling. If it
+   was created by an older version, tell the user and point to the
+   publishing section of the cargo-hakari documentation. Do not
+   change publish settings yourself.
 </hakari_setup>
 
 <change_detection>
@@ -304,6 +308,7 @@ steps in the repo.
 </output_format>
 
 <verification>
+If you have a shell:
 1. Run shellcheck on scripts/check and fix every warning.
 2. In a scratch workspace in a temporary directory, never in the
    real repo, with three crates (a, b depends on a, c depends on
@@ -323,10 +328,11 @@ steps in the repo.
    - a commit containing "[skip ci]" is rejected by the gate's
      commit lint;
    - gate mode passes on a clean tree.
-3. Run scripts/check gate in the real repo and include its result.
+3. Run scripts/check gate in the real repo and report its result.
 4. Delete the scratch workspace.
-5. Include the actual output of each check in the deliverables.
-Never claim a check passes without having run it. When a check fails,
+5. Report the actual output of each check.
+If you have no shell, state that the script is untested. Never
+claim a check passes without having run it. When a check fails,
 fix the script, never the check, and make the script work for
 every workspace that matches <config>, not only the scratch one.
 </verification>
@@ -338,15 +344,16 @@ installation, CI workflows, versioning, and releasing.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification output is
-included. Keep working until then.
-Mention possible improvements at the end instead of making them.
-Produce them in this order:
+Done when all of these are produced and the verification results
+are reported. Keep working until then; stop to ask only when you
+cannot continue without the user or before an action in hard rule
+13. Then stop and report. Mention possible improvements at the end
+instead of making them. Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders.
 2. .cargo/config.toml, .config/nextest.toml, and
    .config/hakari.toml.
-3. The one-time hakari setup commands with their output, or a note
-   that workspace-hack already existed.
+3. The one-time hakari setup commands, marked as already run or
+   still to run.
 4. A table: mode | stages in order | scope | what it catches.
 5. A table: mode | what a green result verifies | what it does
    not verify.

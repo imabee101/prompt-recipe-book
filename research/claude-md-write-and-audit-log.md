@@ -1,7 +1,7 @@
 # Research log: claude-md-write-and-audit
 
 Recipe: ../recipes/claude-md-write-and-audit.md
-Checked: 2026-10-19 (stop-points revision); first checked 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
+Checked: 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
 Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 
 ## Requirements
@@ -13,18 +13,6 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
    each claim, and cite sources.
 3. The prompt must work for both creating a new file and auditing an
    existing one.
-4. 2026-10-19: Running a pasted prompt means the user has read and
-   approved it. The executing session makes the small, operational
-   decisions itself instead of asking or handing them back.
-5. 2026-10-19: That latitude is operational only. The hard rules, scope,
-   and exclusions stay fixed, and judgment never reopens them.
-6. 2026-10-19: In an existing project, work around what is already there
-   and keep existing features intact; choose the least destructive option.
-7. 2026-10-19: Prefer removing constraints that block
-   operational choices over adding a grant of authority; follow
-   Anthropic's prompting guidance. Two earlier revisions (a broad
-   authority grant, then a separate operational-calls section) were
-   reverted at the user's request.
 
 ## Findings
 
@@ -50,11 +38,6 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Edits to root and user CLAUDE.md apply after /clear, /compact, or restart | Confirmed | [C6] | T1 | none |
 | /context lists CLAUDE.md under Memory files; claude --safe-mode disables customizations | Confirmed | [C1] [C4] | T1 | none |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
-| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the ask clause and "stop and report"; they keep "Done when" and "Keep working until then"; the ask-before rule is unchanged |
-| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; stop-and-report wording removed; the prompt says only when work is done and to keep working until then |
-| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
-| A prompt needs a fallback for missing values, missing tools, or checks that cannot run | Not required by any source; each fallback gave the model an exit before the work was done | none (requirement) | n/a | Fallback clauses removed: no UNRESOLVED or CONFLICT markers, no "if you have no shell", no "if you cannot run a check"; the requires line now lists the tools as needed |
-| Telling a model when to ask, or describing a case that may not exist, prevents mistakes | Not required by any source; each such clause gave the model a reason to ask or stop | none (requirement) | n/a | Ask-before rules rewritten as plain constraints (leave history, tags, releases, and other files as they are); hypothetical cases removed (uncommitted CLAUDE.md, existing lockfile, older hakari, missing tool, no fresh session) |
 
 ## Known gaps
 

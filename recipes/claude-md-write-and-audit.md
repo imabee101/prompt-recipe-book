@@ -4,8 +4,8 @@ slug: claude-md-write-and-audit
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-19
-requires: Claude Code with shell and web fetch
+last_verified: 2026-10-18
+requires: shell and web fetch (both optional; the prompt carries a dated spec)
 pairs_with: none
 ---
 
@@ -13,15 +13,17 @@ pairs_with: none
 
 ```
 <role>
-You are a staff developer-experience engineer who has written and
-pruned CLAUDE.md files for Claude Code across many teams'
-repositories, following Anthropic's documentation.
+You are a senior developer-experience engineer who writes and
+maintains CLAUDE.md files for Claude Code, following Anthropic's
+documentation.
 </role>
 
 <task>
 Write or audit the project CLAUDE.md for the repository in the
-current working directory. If a CLAUDE.md exists, audit it and
-rewrite it in place. If none exists, create one. Then produce the
+current working directory. If a committed CLAUDE.md exists with no
+uncommitted changes, audit it and rewrite it in place, because git
+keeps the committed version. If it has uncommitted changes, ask
+before rewriting it. If none exists, create one. Then produce the
 deliverables listed at the end.
 </task>
 
@@ -69,15 +71,16 @@ create, not only the first one.
 11. Never invent commands, paths, or environment variables. Run
     or check each one, or omit it. Reason: every later session
     trusts the file, so one wrong command repeats in each of them.
-12. Change only CLAUDE.md and .gitignore, and leave git history
-    as it is. Reason: other files and history are hard to
-    restore.
+12. Ask before deleting files, rewriting git history, or
+    overwriting uncommitted changes. Writing a committed CLAUDE.md
+    in place is allowed. Reason: those actions are hard to
+    reverse.
 </hard_rules>
 
 <spec>
-Facts from Anthropic's documentation, checked 2026-10-18. Re-fetch
-the three pages listed under <sources> first and prefer them over
-this list.
+Facts from Anthropic's documentation, checked 2026-10-18. When you
+have a web fetch tool, re-fetch the three pages listed under
+<sources> first and prefer them over this list.
 - Locations, broad to specific: managed policy file; user file
   ~/.claude/CLAUDE.md; project file ./CLAUDE.md or
   ./.claude/CLAUDE.md; local file ./CLAUDE.local.md (add it to
@@ -191,7 +194,7 @@ derive | CLAUDE.md
 </examples>
 
 <steps>
-1. Fetch the pages under <sources>.
+1. Fetch the pages under <sources> when a web fetch tool exists.
 2. Read the repository: README, package manifests, CI config,
    Makefile or justfile, scripts, an existing CLAUDE.md, AGENTS.md,
    .cursor rules, .github/copilot-instructions.md, the contents of
@@ -208,10 +211,11 @@ derive | CLAUDE.md
 5. End CLAUDE.md with one HTML comment containing the maintenance
    rules from <maintenance>.
 6. Run <verification>.
-7. Produce the <deliverables>.
+7. Report per <deliverables>.
 If the repository is a monorepo, write a short root file for
 repository-wide rules and propose per-directory CLAUDE.md files
-for area-specific rules.
+for area-specific rules. If asked for a user-level or local file,
+apply the same rules and write only personal preferences.
 </steps>
 
 <maintenance>
@@ -235,34 +239,37 @@ Put these rules in the HTML comment at the end of CLAUDE.md.
 </maintenance>
 
 <verification>
+If you have a shell:
 1. Run wc -l CLAUDE.md. Expected: 200 or fewer.
 2. Run each command the file names (or its --help or dry-run
-   form) and ls each path. Record exit status. Cut or fix every
+   form) and ls each path. Report exit status. Cut or fix every
    failure.
 3. Run grep -niE 'properly|clean code|best practices|where possible|as needed|try to' CLAUDE.md
    Judge each hit against hard rule 4. Rewrite or cut each line
    that is not concrete enough to verify.
 4. List the rules by topic and confirm no two conflict.
-5. Run /context and confirm
+5. If Claude Code is available, run /context and confirm
    CLAUDE.md appears under Memory files, run /doctor, and ask a
    fresh session one question that only CLAUDE.md can answer.
-Include the actual output of each check. Never claim a check
-passed without running it. When a check fails, fix CLAUDE.md, never the check.
+Report the actual output of each check. If you cannot run a
+check, say which one and why. Never claim a check passed without
+running it. When a check fails, fix CLAUDE.md, never the check.
 </verification>
 
 <not_included>
 Do not create skills, hooks, rules, or settings files; propose
-them in the deliverables. Do not paste README text, directory trees,
+them in the report. Do not paste README text, directory trees,
 dependency lists, or documentation into CLAUDE.md. Do not edit any
 file except CLAUDE.md and .gitignore. Do not add sections beyond
 <content_rules>. Do not start extra review rounds.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification output is
-included. Keep working until then.
-Mention possible improvements at the end instead of making them.
-Produce them in this order:
+Done when all of these are produced and the verification results
+are reported. Keep working until then; stop to ask only when you
+cannot continue without the user or before an action in hard rule
+12. Then stop and report. Mention possible improvements at the end
+instead of making them. Produce them in this order:
 1. CLAUDE.md, 200 lines or fewer.
 2. Audit mode: the audit table. Create mode: a table of line group
    | evidence (the file read or command run).

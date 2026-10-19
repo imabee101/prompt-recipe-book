@@ -4,8 +4,8 @@ slug: rust-ci-github-actions
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-19
-requires: shell with actionlint
+last_verified: 2026-10-18
+requires: shell with actionlint (optional)
 pairs_with: rust-local-check-script
 ---
 
@@ -13,9 +13,8 @@ pairs_with: rust-local-check-script
 
 ```
 <role>
-You are a principal CI/release engineer who has built and run
-production GitHub Actions pipelines for large Rust monorepos through
-years of releases.
+You are a senior CI/release engineer who writes production-grade
+GitHub Actions for large Rust monorepos.
 </role>
 
 <task>
@@ -26,8 +25,9 @@ cargo-hakari (a workspace-hack crate). Fill <config> from the
 workspace itself: read every Cargo.toml and the output of
 cargo metadata --locked. Look up each action's latest release and
 its commit SHA in the action's own repository. Then produce the
-deliverables listed at the end. Validate the YAML with actionlint
-and follow <verification>.
+deliverables listed at the end. If you have a shell, validate the
+YAML with actionlint and follow <verification>. Otherwise, review
+the file against the rules below.
 </task>
 
 <goal>
@@ -70,7 +70,8 @@ rule and its reason.
    Create no workflow dependency lockfile
    (.github/workflows/actions.lock). Reason: supply-chain safety;
    the lockfile is in public preview and subject to change, and
-   GitHub recommends SHA pins where no lockfile is used.
+   GitHub recommends SHA pins where no lockfile is used. If the
+   repository already has that lockfile, stop and report it.
 9. Every cargo command uses --locked. Reason: CI must fail if
    Cargo.lock is out of date.
 10. Cheap jobs run first. Each expensive job lists the cheaper
@@ -83,14 +84,16 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. Leave git history, branches, tags, releases, and published
-    packages as they are; the workflow creates tags and releases
-    when it runs. Reason: these are hard to reverse or visible to
-    others.
-13. Take every crate name, path, runner label, and version from the
-    workspace and cargo metadata, and every action SHA from the
-    action's own repository. Reason: an invented SHA or crate name
-    breaks the workflow on its first run.
+12. If any rule conflicts with real GitHub behavior, stop and
+    state the conflict. Reason: a silent workaround hides a broken
+    rule from the user.
+13. Ask before deleting files, rewriting git history, pushing,
+    creating tags, or publishing. Reason: these actions are hard
+    to reverse or visible to others.
+14. Never invent crate names, paths, runner labels, versions, or
+    action SHAs. Reason: an invented SHA or crate name breaks the
+    workflow on its first run. If you cannot look one up, stop and
+    report which one.
 </hard_rules>
 
 <config>
@@ -346,6 +349,7 @@ Create these jobs in order.
 </build_cost>
 
 <verification>
+If you have a shell:
 1. Run actionlint on ci.yml and fix every finding.
 2. Confirm by search: no schedule or workflow_dispatch trigger,
    every job has timeout-minutes, every third-party action is
@@ -354,8 +358,9 @@ Create these jobs in order.
 3. Confirm that no two matrix legs can write the same rust-cache
    shared-key.
 4. Delete any temporary files you created for these checks.
-5. Include the actual output of each check in the deliverables.
-Never claim a check passes without having run it. When a check fails,
+5. Report the actual output of each check.
+If you have no shell, state that the file is unvalidated. Never
+claim a check passes without having run it. When a check fails,
 fix ci.yml, never the check.
 </verification>
 
@@ -366,10 +371,11 @@ and release dry runs in the merge queue.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification output is
-included. Keep working until then.
-Mention possible improvements at the end instead of making them.
-Produce them in this order:
+Done when all of these are produced and the verification results
+are reported. Keep working until then; stop to ask only when you
+cannot continue without the user or before an action in hard rule
+13. Then stop and report. Mention possible improvements at the end
+instead of making them. Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders.
 2. Any shared config file from <shared_config_files> that did not
    already exist.
