@@ -52,6 +52,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
 | Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the open-ended ask clause; only the actions in hard rule 12 wait for the user, and that rule is unchanged |
 | Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No authority section added; the blocking stop points were turned into report-and-continue, so choices the prompt leaves open get made |
+| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
 
 ## Known gaps
 

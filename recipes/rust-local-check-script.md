@@ -13,8 +13,9 @@ pairs_with: rust-ci-github-actions
 
 ```
 <role>
-You are a senior Rust build-tooling engineer who writes fast,
-dependable developer scripts for large Cargo workspaces.
+You are a principal Rust build-tooling engineer who has spent years
+building fast, dependable developer scripts for large Cargo
+workspaces that many teams rely on every day.
 </role>
 
 <task>

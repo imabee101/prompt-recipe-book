@@ -13,8 +13,9 @@ pairs_with: rust-local-check-script
 
 ```
 <role>
-You are a senior CI/release engineer who writes production-grade
-GitHub Actions for large Rust monorepos.
+You are a principal CI/release engineer who has built and run
+production GitHub Actions pipelines for large Rust monorepos through
+years of releases.
 </role>
 
 <task>

@@ -61,6 +61,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the open-ended ask clause; only the actions in hard rule 13 wait for the user, and that rule is unchanged |
 | Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No authority section added; the blocking stop points were turned into report-and-continue, so choices the prompt leaves open get made |
 | A missing value or a rule conflict needs the run to stop | Not required by any source; stopping blocked every other deliverable | none (requirement) | n/a | Missing values get an UNRESOLVED: comment and a report line; conflicts are reported while the rule stays as written |
+| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
 
 ## Known gaps
 

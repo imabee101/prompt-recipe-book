@@ -53,6 +53,7 @@ This request stores a prompt; it does not execute the embedded machine audit.
 | high effort is a reasonable initial setting for harder, longer agentic work. | Confirmed as starting guidance, not an evaluation of this recipe | [A2] | T1 | Set suggested_effort: high. |
 | Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the open-ended ask clause; only the actions in hard rule 11 wait for the user, and that rule is unchanged |
 | Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No authority section added; the blocking stop points were turned into report-and-continue, so choices the prompt leaves open get made |
+| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
 
 ## Known gaps
 
