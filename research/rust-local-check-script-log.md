@@ -63,6 +63,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | A missing value or a rule conflict needs the run to stop | Not required by any source; stopping blocked every other deliverable | none (requirement) | n/a | No fallback clause: every value comes from the workspace and cargo metadata |
 | A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
 | A prompt needs a fallback for missing values, missing tools, or checks that cannot run | Not required by any source; each fallback gave the model an exit before the work was done | none (requirement) | n/a | Fallback clauses removed: no UNRESOLVED or CONFLICT markers, no "if you have no shell", no "if you cannot run a check"; the requires line now lists the tools as needed |
+| Telling a model when to ask, or describing a case that may not exist, prevents mistakes | Not required by any source; each such clause gave the model a reason to ask or stop | none (requirement) | n/a | Ask-before rules rewritten as plain constraints (leave history, tags, releases, and other files as they are); hypothetical cases removed (uncommitted CLAUDE.md, existing lockfile, older hakari, missing tool, no fresh session) |
 
 ## Known gaps
 

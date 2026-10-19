@@ -20,10 +20,8 @@ repositories, following Anthropic's documentation.
 
 <task>
 Write or audit the project CLAUDE.md for the repository in the
-current working directory. If a committed CLAUDE.md exists with no
-uncommitted changes, audit it and rewrite it in place, because git
-keeps the committed version. If it has uncommitted changes, ask
-before rewriting it. If none exists, create one. Then produce the
+current working directory. If a CLAUDE.md exists, audit it and
+rewrite it in place. If none exists, create one. Then produce the
 deliverables listed at the end.
 </task>
 
@@ -71,10 +69,9 @@ create, not only the first one.
 11. Never invent commands, paths, or environment variables. Run
     or check each one, or omit it. Reason: every later session
     trusts the file, so one wrong command repeats in each of them.
-12. Ask before deleting files, rewriting git history, or
-    overwriting uncommitted changes. Writing a committed CLAUDE.md
-    in place is allowed. Reason: those actions are hard to
-    reverse.
+12. Change only CLAUDE.md and .gitignore, and leave git history
+    as it is. Reason: other files and history are hard to
+    restore.
 </hard_rules>
 
 <spec>
@@ -214,8 +211,7 @@ derive | CLAUDE.md
 7. Produce the <deliverables>.
 If the repository is a monorepo, write a short root file for
 repository-wide rules and propose per-directory CLAUDE.md files
-for area-specific rules. If asked for a user-level or local file,
-apply the same rules and write only personal preferences.
+for area-specific rules.
 </steps>
 
 <maintenance>

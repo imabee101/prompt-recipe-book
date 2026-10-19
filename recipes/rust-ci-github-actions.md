@@ -70,9 +70,7 @@ rule and its reason.
    Create no workflow dependency lockfile
    (.github/workflows/actions.lock). Reason: supply-chain safety;
    the lockfile is in public preview and subject to change, and
-   GitHub recommends SHA pins where no lockfile is used. If the
-   repository already has that lockfile, leave it as it is and pin
-   by SHA anyway.
+   GitHub recommends SHA pins where no lockfile is used.
 9. Every cargo command uses --locked. Reason: CI must fail if
    Cargo.lock is out of date.
 10. Cheap jobs run first. Each expensive job lists the cheaper
@@ -85,9 +83,10 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. Ask before deleting files, rewriting git history, pushing,
-    creating tags, or publishing. Reason: these actions are hard
-    to reverse or visible to others.
+12. Leave git history, branches, tags, releases, and published
+    packages as they are; the workflow creates tags and releases
+    when it runs. Reason: these are hard to reverse or visible to
+    others.
 13. Take every crate name, path, runner label, and version from the
     workspace and cargo metadata, and every action SHA from the
     action's own repository. Reason: an invented SHA or crate name

@@ -54,6 +54,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; stop-and-report wording removed; the prompt says only when work is done and to keep working until then |
 | A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
 | A prompt needs a fallback for missing values, missing tools, or checks that cannot run | Not required by any source; each fallback gave the model an exit before the work was done | none (requirement) | n/a | Fallback clauses removed: no UNRESOLVED or CONFLICT markers, no "if you have no shell", no "if you cannot run a check"; the requires line now lists the tools as needed |
+| Telling a model when to ask, or describing a case that may not exist, prevents mistakes | Not required by any source; each such clause gave the model a reason to ask or stop | none (requirement) | n/a | Ask-before rules rewritten as plain constraints (leave history, tags, releases, and other files as they are); hypothetical cases removed (uncommitted CLAUDE.md, existing lockfile, older hakari, missing tool, no fresh session) |
 
 ## Known gaps
 

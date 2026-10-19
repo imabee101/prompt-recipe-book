@@ -76,9 +76,8 @@ one.
    non-interactive session with the slim file (claude -p, codex
    exec, or the Grok equivalent) and run a probe task that the
    removed lines governed. Restore a line only when the probe shows
-   the failure the line prevented, and record that output. When no
-   fresh session can start, restore nothing and mark the cuts
-   "untested". Reason: evidence decides what returns, not caution.
+   the failure the line prevented, and record that output. Reason:
+   evidence decides what returns, not caution.
 9. Back up every file before editing, to
    ~/instruction-backups/<YYYY-MM-DD>/<tool>/, outside every tool's
    config directory so no tool loads the backup. Confirm the backup
@@ -87,10 +86,10 @@ one.
     file for compatibility (Grok reads CLAUDE.md). Check what each
     tool loads before deciding. Reason: duplicated lines double the
     cost.
-11. Ask before deleting a backup or touching any file beyond the
-    three global files and the backup directory. Move any secret
-    found in a file to the deliverables and remove it from the file.
-    Reason: these actions are hard to reverse or sensitive.
+11. Keep every backup, and edit only the three global files and
+    the backup directory. Move any secret found in a file to the
+    deliverables and remove it from the file. Reason: backups are
+    the only restore path, and secrets are sensitive.
 12. Count a check as passed only after running it. Reason: an
     unrun check is a guess.
 </hard_rules>
@@ -105,7 +104,7 @@ List paths to find each file, and use only files that exist.
   tool's own report over this list.
 Confirm what each tool loads: /context in Claude Code, and for Codex
 and Grok a prompt asking the tool to list the instruction files it
-loaded. Mark a missing tool "not found" and create no file.
+loaded.
 </locations>
 
 <examples>
@@ -121,10 +120,10 @@ a, b). Destination: the instruction file of the project that uses
 pnpm.
 </example>
 <example>
-Line: "Ask before deleting files."
-Decision: keep. Without this line, the agent would run rm on user
-files during a task that only asked for cleanup advice. It passes
-all five tests.
+Line: "Search with rg; it is installed on this machine."
+Decision: keep. Without this line, the agent would run grep -r
+across large repositories on this machine, where rg is much faster.
+It passes all five tests.
 </example>
 <example>
 Line: "Reply in short sentences with no preamble."
@@ -162,7 +161,6 @@ included. Keep working until then.
 4. Probe results: category, probe prompt, outcome, and any restored
    line with its failure output.
 5. Backup paths and one restore command per file.
-6. The cuts marked "untested".
 </deliverables>
 ```
 
@@ -170,7 +168,7 @@ included. Keep working until then.
 
 Paste into Claude Code on the machine whose global instruction files need trimming.
 The session needs shell access and permission to edit those files and create backups.
-Missing tools and unavailable fresh-session probes must be reported as specified.
+The agent CLIs must be installed for the behavioral probes.
 Draft: review the research log's unresolved assumptions before execution.
 
 ## Provenance

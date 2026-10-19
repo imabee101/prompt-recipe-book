@@ -86,10 +86,9 @@ the first one.
     broken setup.
 12. Implement only what this prompt specifies. Reason: every extra
     stage costs time on every run.
-13. Ask before deleting files, rewriting git history, pushing, or
-    committing in the real repo. Running the cargo hakari setup
-    commands in <hakari_setup> is allowed. Reason: these actions
-    are hard to reverse or visible to others.
+13. Leave git history, commits, and the remote as they are; the
+    <hakari_setup> commands are part of this job. Reason: these are
+    hard to reverse or visible to others.
 14. Take every crate name, path, triple, and version from the
     workspace and cargo metadata. Reason: an invented name makes
     the script fail on its first run.
@@ -159,13 +158,10 @@ steps in the repo.
 3. cargo hakari generate
 4. cargo hakari manage-deps
 5. cargo hakari verify
-6. If any crate has publish enabled for crates.io, confirm the
-   workspace-hack was created by cargo-hakari 0.9.9 or newer. That
-   version targets the empty workspace-hack crate already on
-   crates.io, so cargo publish needs no special handling. If it
-   was created by an older version, tell the user and point to the
-   publishing section of the cargo-hakari documentation. Do not
-   change publish settings yourself.
+6. Confirm the workspace-hack was created by cargo-hakari 0.9.9 or
+   newer. That version targets the empty workspace-hack crate
+   already on crates.io, so cargo publish needs no special
+   handling. Leave publish settings as they are.
 </hakari_setup>
 
 <change_detection>
