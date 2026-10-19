@@ -4,7 +4,7 @@ slug: rust-local-check-script
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 requires: shell with git, jq, cargo, cargo-nextest, cargo-hakari, shellcheck (clang and lld for linker settings)
 pairs_with: rust-ci-github-actions
 ---
@@ -13,8 +13,9 @@ pairs_with: rust-ci-github-actions
 
 ```
 <role>
-You are a senior Rust build-tooling engineer who writes fast,
-dependable developer scripts for large Cargo workspaces.
+You are a principal Rust build-tooling engineer who has spent years
+building fast, dependable developer scripts for large Cargo
+workspaces that many teams rely on every day.
 </role>
 
 <task>
@@ -36,6 +37,12 @@ mode for iteration and a full gate mode for before pushing, and
 every green fast run states what it did not verify. Gate mode runs
 the same stages as the CI pipeline, so a green local gate predicts
 a green CI run.
+
+Carry the work through to the finished deliverables. Where the
+repository falls short of this, close the gap with the smallest
+change that keeps what the product does, and create only the files
+this prompt names. Where this prompt leaves room, choose the option
+that meets it with the least disruption to the repository.
 </goal>
 
 <hard_rules>
@@ -85,13 +92,13 @@ the first one.
     broken setup.
 12. Implement only what this prompt specifies. Reason: every extra
     stage costs time on every run.
-13. Ask before deleting files, rewriting git history, pushing, or
-    committing in the real repo. Running the cargo hakari setup
-    commands in <hakari_setup> is allowed. Reason: these actions
-    are hard to reverse or visible to others.
+13. Leave git history as it is, and commit or push nothing in the
+    real repo.
+    Running the cargo hakari setup commands in <hakari_setup> is
+    part of this job. Reason: these actions are hard to reverse or
+    visible to others.
 14. Never invent crate names, paths, triples, or versions. Reason:
-    an invented name makes the script fail on its first run. If you
-    cannot find one, stop and report which one.
+    an invented name makes the script fail on its first run.
 </hard_rules>
 
 <config>
@@ -344,11 +351,10 @@ installation, CI workflows, versioning, and releasing.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then; stop to ask only when you
-cannot continue without the user or before an action in hard rule
-13. Then stop and report. Mention possible improvements at the end
-instead of making them. Produce them in this order:
+Done when all of these are produced, including the verification
+results. Keep working until then.
+Mention possible improvements at the end instead of making them.
+Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders.
 2. .cargo/config.toml, .config/nextest.toml, and
    .config/hakari.toml.

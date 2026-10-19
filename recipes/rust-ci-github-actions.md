@@ -4,7 +4,7 @@ slug: rust-ci-github-actions
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 requires: shell with actionlint (optional)
 pairs_with: rust-local-check-script
 ---
@@ -13,8 +13,9 @@ pairs_with: rust-local-check-script
 
 ```
 <role>
-You are a senior CI/release engineer who writes production-grade
-GitHub Actions for large Rust monorepos.
+You are a principal CI/release engineer who has built and run
+production GitHub Actions pipelines for large Rust monorepos through
+years of releases.
 </role>
 
 <task>
@@ -36,6 +37,12 @@ only when the event and the diff make it relevant. This keeps cost
 low and prevents multi-hour builds. The same stages exist in the
 local script scripts/check gate, so a green local gate predicts a
 green CI run.
+
+Carry the work through to the finished deliverables. Where the
+repository falls short of this, close the gap with the smallest
+change that keeps what the product does, and create only the files
+this prompt names. Where this prompt leaves room, choose the option
+that meets it with the least disruption to the repository.
 </goal>
 
 <hard_rules>
@@ -70,8 +77,7 @@ rule and its reason.
    Create no workflow dependency lockfile
    (.github/workflows/actions.lock). Reason: supply-chain safety;
    the lockfile is in public preview and subject to change, and
-   GitHub recommends SHA pins where no lockfile is used. If the
-   repository already has that lockfile, stop and report it.
+   GitHub recommends SHA pins where no lockfile is used.
 9. Every cargo command uses --locked. Reason: CI must fail if
    Cargo.lock is out of date.
 10. Cheap jobs run first. Each expensive job lists the cheaper
@@ -84,16 +90,13 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. If any rule conflicts with real GitHub behavior, stop and
-    state the conflict. Reason: a silent workaround hides a broken
-    rule from the user.
-13. Ask before deleting files, rewriting git history, pushing,
-    creating tags, or publishing. Reason: these actions are hard
-    to reverse or visible to others.
-14. Never invent crate names, paths, runner labels, versions, or
+12. Leave git history, tags, and crate versions already on
+    crates.io as they are, and push nothing.
+    Reason: these actions are hard to reverse or visible to
+    others.
+13. Never invent crate names, paths, runner labels, versions, or
     action SHAs. Reason: an invented SHA or crate name breaks the
-    workflow on its first run. If you cannot look one up, stop and
-    report which one.
+    workflow on its first run.
 </hard_rules>
 
 <config>
@@ -142,7 +145,7 @@ TARGETS: {"name":"linux","triple":"x86_64-unknown-linux-gnu",
 </config>
 
 <shared_config_files>
-Create these files only if they do not already exist. Both are
+Create these files, or bring existing ones in line. Both are
 shared with the local script scripts/check.
 
 .cargo/config.toml
@@ -371,11 +374,10 @@ and release dry runs in the merge queue.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then; stop to ask only when you
-cannot continue without the user or before an action in hard rule
-13. Then stop and report. Mention possible improvements at the end
-instead of making them. Produce them in this order:
+Done when all of these are produced, including the verification
+results. Keep working until then.
+Mention possible improvements at the end instead of making them.
+Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders.
 2. Any shared config file from <shared_config_files> that did not
    already exist.
