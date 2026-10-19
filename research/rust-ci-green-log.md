@@ -18,9 +18,9 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 5. Minimal language, optimized like the revised CI recipe: smallest
    change that keeps what the product does, no new documents, least
    disruptive option.
-6. Hard rule 10 must work where auto-merge is off and branch protection
-   or rulesets are unavailable on the plan (API 403), so required checks
-   may not be enforced.
+6. Hard rule 10 must transfer to any repository and agent: use
+   auto-merge where available, merge directly where it is not, and give
+   the agent no reason to stop and ask how to merge.
 
 ## Findings
 
@@ -43,8 +43,8 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience |
 | Positive instructions work better than prohibitions | Confirmed | [A1] [A3] | T1 | Exclusions moved to not_included; verification phrased positively |
 | Models report code as done without running a check | Confirmed | [A2] | T1 | verification requires actual output in each pull request |
-| gh pr merge --auto works on every repository | Not assumed: the user reports a repository with allow_auto_merge false where branch protection and rulesets return 403 on its plan, so --auto can be refused and required checks may not be enforced | none (user report) | n/a | Hard rule 10 waits with gh pr checks --watch and merges with gh pr merge once every check passes |
-| gh pr checks --watch waits until checks finish; --required fails when no checks are required | Confirmed | [H4] | T1 | Hard rule 10 uses --watch without --required |
+| gh pr merge --auto works on every repository | Not assumed: the user reports a repository with allow_auto_merge false where branch protection and rulesets return 403 on its plan, so --auto can be refused and required checks may not be enforced | none (user report) | n/a | Hard rule 10 names no merge mechanism: merge once every check passes, by any path the repository allows (auto-merge, merge queue, or direct) |
+| gh pr checks --watch waits until checks finish; --required fails when no checks are required | Confirmed | [H4] | T1 | none; kept as background for why the rule names no command |
 
 ## Known gaps
 

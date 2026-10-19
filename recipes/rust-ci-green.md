@@ -79,11 +79,9 @@ the first one.
 9. Change workspace-hack/Cargo.toml only through cargo hakari
    commands. Reason: cargo hakari generates that file, and the
    gates job fails on any drift from its output.
-10. Wait for ci.yml on each pull request with
-    gh pr checks <pr> --watch, and merge it with gh pr merge and a
-    merge method the repository allows once every check passes.
-    Reason: the passing run is the gate, whatever the repository's
-    merge settings.
+10. Merge each pull request once every check on it passes, by any
+    merge path the repository allows. Reason: the passing run is
+    the gate, whatever the repository's merge settings.
 11. Take every crate name, path, version, and command from the
     workspace, cargo metadata, and ci.yml. Reason: an invented name
     fails on its first run.
