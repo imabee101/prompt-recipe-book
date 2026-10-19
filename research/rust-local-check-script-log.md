@@ -1,7 +1,7 @@
 # Research log: rust-local-check-script
 
 Recipe: ../recipes/rust-local-check-script.md
-Checked: 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
+Checked: 2026-10-19 (operational-calls revision); first checked 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
 Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 
 ## Requirements
@@ -15,6 +15,16 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 6. Include cargo-hakari.
 7. Keep the prompt in parity with the CI recipe: same stages, flags,
    regexes, and version minimums.
+8. 2026-10-19: Running a pasted prompt means the user has read and
+   approved it. The executing session makes the small, operational
+   decisions itself instead of asking or handing them back.
+9. 2026-10-19: That latitude is operational only. The hard rules, scope,
+   and exclusions stay fixed, and judgment never reopens them.
+10. 2026-10-19: In an existing project, work around what is already there
+   and keep existing features intact; choose the least destructive option.
+11. 2026-10-19: Make the role a little more authoritative, and follow
+   Anthropic's prompting guidance. (An earlier revision that granted broad
+   authority was reverted at the user's request.)
 
 ## Findings
 
@@ -46,6 +56,11 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | cargo hakari generates workspace-hack and checks drift with generate --diff | Confirmed | [R8] | T1 | Rule 10 reason |
 | cargo deny trigger and docs-only globs differed from the CI recipe | Corrected for parity: both use Cargo.toml, Cargo.lock, .config/hakari.toml, and docs/**, **/*.md, LICENSE*, .github/ISSUE_TEMPLATE/** | none (parity) | n/a | change_detection and gate stage b |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
+| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | operational_calls section: operational choices are made, not asked |
+| Giving the reason behind an instruction helps Claude apply it to unnamed cases | Confirmed | [A1] | T1 | Operational calls are settled by the reason on the nearest rule |
+| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables keep working with no general ask clause; hard rule 13 and the existing escalation rules (13 and 14) stay unchanged |
+| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role adds ownership of operational calls only |
+| Examples, including contrasting ones, steer behavior more reliably than description alone | Confirmed | [A1] | T1 | One operational versus not-operational contrast per recipe |
 
 ## Known gaps
 

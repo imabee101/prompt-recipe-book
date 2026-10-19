@@ -4,7 +4,7 @@ slug: rust-ci-github-actions
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 requires: shell with actionlint (optional)
 pairs_with: rust-local-check-script
 ---
@@ -14,7 +14,8 @@ pairs_with: rust-local-check-script
 ```
 <role>
 You are a senior CI/release engineer who writes production-grade
-GitHub Actions for large Rust monorepos.
+GitHub Actions for large Rust monorepos and owns the operational
+calls on this job.
 </role>
 
 <task>
@@ -95,6 +96,30 @@ rule and its reason.
     workflow on its first run. If you cannot look one up, stop and
     report which one.
 </hard_rules>
+
+<operational_calls>
+Running this prompt is the user's go-ahead. Its hard rules, the
+files it names, and <not_included> are the fixed frame for this job;
+inside that frame, the operational calls are yours. Make them and
+keep going. Settle each one by checking, in order: what this prompt
+asks for, the reason on the nearest rule, what the repository
+already does, and the tool's documented default. When options still
+remain, take the one easiest to undo.
+Operational: job, step, and output names; order within a job; which
+of two commands meets the same rule; comment wording; how ci.yml
+fits the repository's layout. Not operational: adding a schedule
+trigger because nightly builds look useful.
+A call that would loosen a hard rule, change the scope above, or
+bring in an item from <not_included> is outside this latitude. For
+those, follow this prompt's own instruction: hard rule 12 for a
+conflict with GitHub, hard rule 14 for a value you cannot find, and
+hard rule 13 for the actions it lists.
+In an existing repository, build around what is there: keep existing
+features working, and leave files outside this prompt's list as they
+are. If one of those files conflicts with a hard rule, name it under
+Decisions and leave it unchanged.
+List each call you made, with its evidence, under Decisions.
+</operational_calls>
 
 <config>
 Put this at the top of the file as one JSON block in env. Adding a
@@ -372,8 +397,8 @@ and release dry runs in the merge queue.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then; stop to ask only when you
-cannot continue without the user or before an action in hard rule
+are reported. Keep working until then, making the operational
+calls yourself; pause only before an action listed in hard rule
 13. Then stop and report. Mention possible improvements at the end
 instead of making them. Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders.
@@ -390,6 +415,8 @@ instead of making them. Produce them in this order:
 7. One sentence confirming the one-time hakari setup
    (cargo hakari init, manage-deps, generate) is committed
    before this workflow is enabled.
+8. Decisions: each operational call, with its evidence, one line
+   each.
 </deliverables>
 ```
 

@@ -4,7 +4,7 @@ slug: rust-local-check-script
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 requires: shell with git, jq, cargo, cargo-nextest, cargo-hakari, shellcheck (clang and lld for linker settings)
 pairs_with: rust-ci-github-actions
 ---
@@ -14,7 +14,8 @@ pairs_with: rust-ci-github-actions
 ```
 <role>
 You are a senior Rust build-tooling engineer who writes fast,
-dependable developer scripts for large Cargo workspaces.
+dependable developer scripts for large Cargo workspaces and owns
+the operational calls on this job.
 </role>
 
 <task>
@@ -93,6 +94,29 @@ the first one.
     an invented name makes the script fail on its first run. If you
     cannot find one, stop and report which one.
 </hard_rules>
+
+<operational_calls>
+Running this prompt is the user's go-ahead. Its hard rules, the
+files it names, and <not_included> are the fixed frame for this job;
+inside that frame, the operational calls are yours. Make them and
+keep going. Settle each one by checking, in order: what this prompt
+asks for, the reason on the nearest rule, what the repository
+already does, and the tool's documented default. When options still
+remain, take the one easiest to undo.
+Operational: stage function names; variable names; the order of
+background lanes; which of two commands meets the same rule; comment
+wording; how scripts/check fits the repository's layout. Not
+operational: adding sccache because builds look slow.
+A call that would loosen a hard rule, change the scope above, or
+bring in an item from <not_included> is outside this latitude. For
+those, follow this prompt's own instruction: hard rule 14 for a
+value you cannot find, and hard rule 13 for the actions it lists.
+In an existing repository, build around what is there: keep existing
+features working, and leave files outside this prompt's list as they
+are. If one of those files conflicts with a hard rule, name it under
+Decisions and leave it unchanged.
+List each call you made, with its evidence, under Decisions.
+</operational_calls>
 
 <config>
 Put this at the top of the script as one JSON variable. Adding a
@@ -345,8 +369,8 @@ installation, CI workflows, versioning, and releasing.
 
 <deliverables>
 Done when all of these are produced and the verification results
-are reported. Keep working until then; stop to ask only when you
-cannot continue without the user or before an action in hard rule
+are reported. Keep working until then, making the operational
+calls yourself; pause only before an action listed in hard rule
 13. Then stop and report. Mention possible improvements at the end
 instead of making them. Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders.
@@ -362,6 +386,8 @@ instead of making them. Produce them in this order:
    rust-analyzer.cargo.targetDir at its own directory so the IDE
    does not block the script; the first build is slower because
    workspace-hack compiles more dependencies up front.
+7. Decisions: each operational call, with its evidence, one line
+   each.
 </deliverables>
 ```
 

@@ -1,7 +1,7 @@
 # Research log: claude-md-write-and-audit
 
 Recipe: ../recipes/claude-md-write-and-audit.md
-Checked: 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
+Checked: 2026-10-19 (operational-calls revision); first checked 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
 Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 
 ## Requirements
@@ -13,6 +13,16 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
    each claim, and cite sources.
 3. The prompt must work for both creating a new file and auditing an
    existing one.
+4. 2026-10-19: Running a pasted prompt means the user has read and
+   approved it. The executing session makes the small, operational
+   decisions itself instead of asking or handing them back.
+5. 2026-10-19: That latitude is operational only. The hard rules, scope,
+   and exclusions stay fixed, and judgment never reopens them.
+6. 2026-10-19: In an existing project, work around what is already there
+   and keep existing features intact; choose the least destructive option.
+7. 2026-10-19: Make the role a little more authoritative, and follow
+   Anthropic's prompting guidance. (An earlier revision that granted broad
+   authority was reverted at the user's request.)
 
 ## Findings
 
@@ -38,6 +48,11 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Edits to root and user CLAUDE.md apply after /clear, /compact, or restart | Confirmed | [C6] | T1 | none |
 | /context lists CLAUDE.md under Memory files; claude --safe-mode disables customizations | Confirmed | [C1] [C4] | T1 | none |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
+| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | operational_calls section: operational choices are made, not asked |
+| Giving the reason behind an instruction helps Claude apply it to unnamed cases | Confirmed | [A1] | T1 | Operational calls are settled by the reason on the nearest rule |
+| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables keep working with no general ask clause; hard rule 12 and the existing escalation rules (11 and 12 and the task's uncommitted-changes case) stay unchanged |
+| A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role adds ownership of operational calls only |
+| Examples, including contrasting ones, steer behavior more reliably than description alone | Confirmed | [A1] | T1 | One operational versus not-operational contrast per recipe |
 
 ## Known gaps
 
