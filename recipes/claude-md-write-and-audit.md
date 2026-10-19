@@ -211,7 +211,7 @@ derive | CLAUDE.md
 5. End CLAUDE.md with one HTML comment containing the maintenance
    rules from <maintenance>.
 6. Run <verification>.
-7. Report per <deliverables>.
+7. Produce the <deliverables>.
 If the repository is a monorepo, write a short root file for
 repository-wide rules and propose per-directory CLAUDE.md files
 for area-specific rules. If asked for a user-level or local file,
@@ -242,7 +242,7 @@ Put these rules in the HTML comment at the end of CLAUDE.md.
 If you have a shell:
 1. Run wc -l CLAUDE.md. Expected: 200 or fewer.
 2. Run each command the file names (or its --help or dry-run
-   form) and ls each path. Report exit status. Cut or fix every
+   form) and ls each path. Record exit status. Cut or fix every
    failure.
 3. Run grep -niE 'properly|clean code|best practices|where possible|as needed|try to' CLAUDE.md
    Judge each hit against hard rule 4. Rewrite or cut each line
@@ -251,22 +251,22 @@ If you have a shell:
 5. If Claude Code is available, run /context and confirm
    CLAUDE.md appears under Memory files, run /doctor, and ask a
    fresh session one question that only CLAUDE.md can answer.
-Report the actual output of each check. If you cannot run a
+Include the actual output of each check. If you cannot run a
 check, say which one and why. Never claim a check passed without
 running it. When a check fails, fix CLAUDE.md, never the check.
 </verification>
 
 <not_included>
 Do not create skills, hooks, rules, or settings files; propose
-them in the report. Do not paste README text, directory trees,
+them in the deliverables. Do not paste README text, directory trees,
 dependency lists, or documentation into CLAUDE.md. Do not edit any
 file except CLAUDE.md and .gitignore. Do not add sections beyond
 <content_rules>. Do not start extra review rounds.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then. Then stop and report.
+Done when all of these are produced and the verification output is
+included. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. CLAUDE.md, 200 lines or fewer.

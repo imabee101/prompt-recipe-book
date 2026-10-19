@@ -50,8 +50,8 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Edits to root and user CLAUDE.md apply after /clear, /compact, or restart | Confirmed | [C6] | T1 | none |
 | /context lists CLAUDE.md under Memory files; claude --safe-mode disables customizations | Confirmed | [C1] [C4] | T1 | none |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
-| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the open-ended ask clause and keep only "Keep working until then"; the ask-before rule is unchanged |
-| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; blocking stop points were removed or turned into report-and-continue |
+| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the ask clause and "stop and report"; they keep "Done when" and "Keep working until then"; the ask-before rule is unchanged |
+| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; stop-and-report wording removed; the prompt says only when work is done and to keep working until then |
 | A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
 
 ## Known gaps

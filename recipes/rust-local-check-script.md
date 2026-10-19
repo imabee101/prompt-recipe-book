@@ -93,8 +93,7 @@ the first one.
 14. Never invent crate names, paths, triples, or versions. Reason:
     an invented name makes the script fail on its first run. If you
     cannot find one, mark that spot with a comment starting
-    UNRESOLVED: that names the value, finish the rest, and report
-    which one.
+    UNRESOLVED: that names the value, and finish the rest.
 </hard_rules>
 
 <config>
@@ -331,9 +330,9 @@ If you have a shell:
    - a commit containing "[skip ci]" is rejected by the gate's
      commit lint;
    - gate mode passes on a clean tree.
-3. Run scripts/check gate in the real repo and report its result.
+3. Run scripts/check gate in the real repo and include its result.
 4. Delete the scratch workspace.
-5. Report the actual output of each check.
+5. Include the actual output of each check in the deliverables.
 If you have no shell, state that the script is untested. Never
 claim a check passes without having run it. When a check fails,
 fix the script, never the check, and make the script work for
@@ -347,8 +346,8 @@ installation, CI workflows, versioning, and releasing.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then. Then stop and report.
+Done when all of these are produced and the verification output is
+included. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders

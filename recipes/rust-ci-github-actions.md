@@ -72,8 +72,8 @@ rule and its reason.
    (.github/workflows/actions.lock). Reason: supply-chain safety;
    the lockfile is in public preview and subject to change, and
    GitHub recommends SHA pins where no lockfile is used. If the
-   repository already has that lockfile, leave it as it is, pin by
-   SHA anyway, and report it.
+   repository already has that lockfile, leave it as it is and pin
+   by SHA anyway.
 9. Every cargo command uses --locked. Reason: CI must fail if
    Cargo.lock is out of date.
 10. Cheap jobs run first. Each expensive job lists the cheaper
@@ -86,9 +86,10 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. If any rule conflicts with real GitHub behavior, state the
-    conflict in the report, leave the rule as written, and finish
-    everything the conflict does not touch. Reason: a silent
+12. If any rule conflicts with real GitHub behavior, leave the rule
+    as written, mark that spot with a comment starting CONFLICT:
+    that names it, and finish everything the conflict does not
+    touch. Reason: a silent
     workaround hides a broken rule from the user.
 13. Ask before deleting files, rewriting git history, pushing,
     creating tags, or publishing. Reason: these actions are hard
@@ -97,7 +98,7 @@ rule and its reason.
     action SHAs. Reason: an invented SHA or crate name breaks the
     workflow on its first run. If you cannot look one up, mark that
     spot with a comment starting UNRESOLVED: that names the value,
-    finish the rest, and report which one.
+    and finish the rest.
 </hard_rules>
 
 <config>
@@ -362,7 +363,7 @@ If you have a shell:
 3. Confirm that no two matrix legs can write the same rust-cache
    shared-key.
 4. Delete any temporary files you created for these checks.
-5. Report the actual output of each check.
+5. Include the actual output of each check in the deliverables.
 If you have no shell, state that the file is unvalidated. Never
 claim a check passes without having run it. When a check fails,
 fix ci.yml, never the check.
@@ -375,12 +376,13 @@ and release dry runs in the merge queue.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then. Then stop and report.
+Done when all of these are produced and the verification output is
+included. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders
-   other than UNRESOLVED: comments from hard rule 14.
+   other than CONFLICT: and UNRESOLVED: comments from hard rules
+   12 and 14.
 2. Any shared config file from <shared_config_files> that did not
    already exist.
 3. A table: job | trigger event | components and targets covered |

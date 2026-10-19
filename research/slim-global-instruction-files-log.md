@@ -51,8 +51,8 @@ This request stores a prompt; it does not execute the embedded machine audit.
 | A single probe can establish the behavioral value of a removed category or line. | Unverified evaluation assumption | none | T0 | Preserved protocol; single samples do not establish causality or reliability. |
 | Explicit scope, examples, reasons, and stopping conditions are appropriate prompt structures. | Confirmed in reviewed guidance | [A1], [A2] | T1 | Retained supplied XML structure and examples. |
 | high effort is a reasonable initial setting for harder, longer agentic work. | Confirmed as starting guidance, not an evaluation of this recipe | [A2] | T1 | Set suggested_effort: high. |
-| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the open-ended ask clause and keep only "Keep working until then"; the ask-before rule is unchanged |
-| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; blocking stop points were removed or turned into report-and-continue |
+| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the ask clause and "stop and report"; they keep "Done when" and "Keep working until then"; the ask-before rule is unchanged |
+| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; stop-and-report wording removed; the prompt says only when work is done and to keep working until then |
 | A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
 
 ## Known gaps

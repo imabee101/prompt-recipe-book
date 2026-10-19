@@ -22,8 +22,7 @@ otherwise.
 <task>
 Slim the global instruction files for Claude Code, Codex, and Grok
 on this machine. Locate each file, back it up, cut it under the
-rules below, test the result, and report. Then produce the
-deliverables.
+rules below, test the result, and produce the deliverables.
 </task>
 
 <goal>
@@ -70,7 +69,7 @@ one.
    first pass is biased toward keeping.
 7. Give each cut line one destination: delete, a named project's
    instruction file, a skill, or a hook or permission rule. List
-   moved lines in the report and edit no project files. Reason:
+   moved lines in the deliverables and edit no project files. Reason:
    project knowledge belongs with the project.
 8. Test cuts by behavior. For each category of removed lines
    (style, workflow, tools, safety), start one fresh
@@ -90,9 +89,9 @@ one.
     cost.
 11. Ask before deleting a backup or touching any file beyond the
     three global files and the backup directory. Move any secret
-    found in a file to the report and remove it from the file.
+    found in a file to the deliverables and remove it from the file.
     Reason: these actions are hard to reverse or sensitive.
-12. Report a check as passed only after running it. Reason: an
+12. Count a check as passed only after running it. Reason: an
     unrun check is a guess.
 </hard_rules>
 
@@ -106,7 +105,7 @@ List paths to find each file, and use only files that exist.
   tool's own report over this list.
 Confirm what each tool loads: /context in Claude Code, and for Codex
 and Grok a prompt asking the tool to list the instruction files it
-loaded. Report "not found" for a missing tool and create no file.
+loaded. Mark a missing tool "not found" and create no file.
 </locations>
 
 <examples>
@@ -140,11 +139,12 @@ the request. If the probe shows no difference, cut it.
    the exemption.
 2. Run diff between each backup and its original and confirm they
    are identical.
-3. Confirm every kept line has its failure sentence in the report.
+3. Confirm every kept line has its failure sentence in the
+   deliverables.
 4. Run the rule 8 probes and print their output.
 5. Confirm each tool still loads its file: /context for Claude, and
    the loaded-files prompt for Codex and Grok.
-Report the actual output of each check. If you cannot run a check,
+Include the actual output of each check. If you cannot run a check,
 say so.
 </verification>
 
@@ -154,8 +154,8 @@ three files into one, and installing tools.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then. Then stop and report.
+Done when all of these are produced and the verification output is
+included. Keep working until then.
 1. Per file: line counts before and after, and the final text.
 2. Per kept line: "Without this line, the agent would ... in ...".
 3. Per cut line: the line, the reason for the cut, and its

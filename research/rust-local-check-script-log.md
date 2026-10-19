@@ -58,9 +58,9 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | cargo hakari generates workspace-hack and checks drift with generate --diff | Confirmed | [R8] | T1 | Rule 10 reason |
 | cargo deny trigger and docs-only globs differed from the CI recipe | Corrected for parity: both use Cargo.toml, Cargo.lock, .config/hakari.toml, and docs/**, **/*.md, LICENSE*, .github/ISSUE_TEMPLATE/** | none (parity) | n/a | change_detection and gate stage b |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
-| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the open-ended ask clause and keep only "Keep working until then"; the ask-before rule is unchanged |
-| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; blocking stop points were removed or turned into report-and-continue |
-| A missing value or a rule conflict needs the run to stop | Not required by any source; stopping blocked every other deliverable | none (requirement) | n/a | Missing values get an UNRESOLVED: comment and a report line; conflicts are reported while the rule stays as written |
+| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the ask clause and "stop and report"; they keep "Done when" and "Keep working until then"; the ask-before rule is unchanged |
+| Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; stop-and-report wording removed; the prompt says only when work is done and to keep working until then |
+| A missing value or a rule conflict needs the run to stop | Not required by any source; stopping blocked every other deliverable | none (requirement) | n/a | Missing values get an UNRESOLVED: comment at that spot and the rest is finished; a GitHub conflict gets a CONFLICT: comment while the rule stays as written |
 | A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
 
 ## Known gaps
