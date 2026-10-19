@@ -10,10 +10,7 @@ names across recipes [A1]. Omit a tag only when it has no content.
   never "Can you write X". Current models act on direct instructions and
   only suggest when asked a question [A1].
 - `<goal>`: the outcome and why it matters. Context lets the model
-  generalize from the intent [A1]. Add the authority paragraph: the
-  user approved the prompt by running it; in a new project build the
-  target, in an existing one keep what meets it, reshape what
-  conflicts, add what is missing.
+  generalize from the intent [A1].
 - `<hard_rules>`: numbered rules, each with its reason. Open with a scope
   sentence: "Apply every rule to every <unit>, not only the first one."
 - `<config>` with an `<example>`: the editable inputs. Wrap examples in
@@ -24,15 +21,7 @@ names across recipes [A1]. Omit a tag only when it has no content.
   report [A2].
 - `<not_included>`: a closed list of things to leave out [A1] [A2].
 - `<deliverables>`: a numbered list in delivery order. Open with a
-  stopping condition: "Done when ..." and "Keep working until then"
-  with no ask clause [A2]. End with Decisions (open point | evidence |
-  choice | how to undo) and possible improvements.
-
-Every recipe that changes files carries three hard rules, copied
-from rust-ci-github-actions rules 13 to 15 and adapted: decide open
-points in a fixed source order; keep existing behavior by reshaping
-it; make each change recoverable (backups, git) instead of asking.
-Add three decision examples in `<decision_examples>` [A1].
+  stopping condition: "Done when ..." [A2].
 
 If a recipe embeds long inputs, put them at the top of the prompt and the
 instructions after them [A1].

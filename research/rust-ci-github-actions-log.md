@@ -1,7 +1,7 @@
 # Research log: rust-ci-github-actions
 
 Recipe: ../recipes/rust-ci-github-actions.md
-Checked: 2026-10-19 (revised for authority and decision rules); first checked 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
+Checked: 2026-10-18 (re-audited 2026-10-18 against [A1]-[A4])
 Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 
 ## Requirements
@@ -20,23 +20,6 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
    Anthropic's prompting guidance.
 7. Include cargo-hakari.
 8. Keep the prompt in parity with the local check script recipe.
-9. 2026-10-19: "if I'm pasting this prompt, it's because I've read the
-   prompt and that the prompt is authoritative and the new reality that
-   the project should be held by." It acts without asking questions or
-   handing decisions back ("this decision, it's on you").
-10. 2026-10-19: "I don't want it to skip things either."
-11. 2026-10-19: "It should make the least destructive action to the
-   repository to make the new reality."
-12. 2026-10-19: when making a choice, "pick something to do that follows
-   the intent of the project while prioritizing the prompt."
-13. 2026-10-19: the prompt may run "in a new project or making a new
-   project comply."
-14. 2026-10-19: in an existing repository, "I don't want it to suddenly
-   start undoing a product or a feature." Reshape what is needed to make
-   it production oriented, "not undo something that was done for a
-   purpose."
-15. 2026-10-19: make "the role inside of the prompt slightly more
-   authoritative," and apply Anthropic's prompting best practices.
 
 ## Findings
 
@@ -75,16 +58,6 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | macos-14 runner is arm64 | Confirmed | [G11] | T1 | none (example value) |
 | actionlint is more than a syntax check | Confirmed: it type-checks expressions | [R15] | T1 | none |
 | Prompt audit against [A1] [A2] [A3] [A4] | Corrected: missing rule reasons, examples, tag order, stop-and-report wording, and confirmation rules failed checklist items | [A1] [A2] [A3] [A4] | T1 | See research/prompt-audit-2026-10-18.md |
-| Claude can be told to act by default: implement rather than suggest, and when intent is unclear infer the most useful action and proceed | Confirmed | [A1] | T1 | Authority paragraph in goal; hard rule 13 decides open points from a fixed source order |
-| Explaining why an instruction matters helps Claude generalize to cases the instruction does not name | Confirmed | [A1] | T1 | Authority stated with its reason; hard rule 13 uses each rule's Reason to settle unnamed cases |
-| Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables say keep working with no ask clause; risky actions handled by hard rule 15 |
-| Anthropic's sample safety prompt asks before destructive or shared actions | Confirmed, then replaced by user requirement: running the prompt is the approval, so changes stay recoverable (backups, git) instead of asked about | [A1] | T1 | Hard rule 15 replaces the ask-before rule |
-| A one-sentence role focuses behavior and tone | Confirmed. The prompt relies on hard rule 13, not the role, to stop questions | [A1] | T1 | Role names ownership of every judgment call |
-| Positive instructions work better than prohibitions | Confirmed | [A1] [A3] | T1 | Instruction-style negatives rewritten as positive rules or moved to not_included |
-| A few diverse examples steer behavior better than rules alone | Confirmed | [A1] | T1 | decision_examples with three open-point examples |
-| git restores tracked paths from a commit, so uncommitted or untracked content has no git copy | Confirmed | [S7] | T1 | Hard rule 15: back up such files before changing them |
-| git symbolic-ref refs/remotes/origin/HEAD finds the default branch | Corrected: it fails in a fresh clone; git ls-remote --symref origin HEAD works | [L3] | T1 | Default-branch decision example uses ls-remote |
-| Parity with the paired recipe after this revision | Confirmed: hard rules 13 and 14 are identical; 15 and 16 differ only in recipe nouns and the local hakari setup line; both merge into existing config files | none (parity) | n/a | shared_config_files and config_files merge keys |
 
 ## Known gaps
 

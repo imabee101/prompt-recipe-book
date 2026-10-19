@@ -4,7 +4,7 @@ slug: rust-ci-github-actions
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-19
+last_verified: 2026-10-18
 requires: shell with actionlint (optional)
 pairs_with: rust-local-check-script
 ---
@@ -13,22 +13,21 @@ pairs_with: rust-local-check-script
 
 ```
 <role>
-You are the lead CI/release engineer for this Rust monorepo, with
-full authority over its GitHub Actions setup and ownership of every
-judgment call in this run.
+You are a senior CI/release engineer who writes production-grade
+GitHub Actions for large Rust monorepos.
 </role>
 
 <task>
-Write .github/workflows/ci.yml. It lints, checks, tests, versions,
-builds, and releases a Rust workspace that has multiple components
-and multiple target triples. The workspace uses cargo-hakari (a
-workspace-hack crate). Fill <config> from the workspace itself:
-read every Cargo.toml and the output of cargo metadata --locked.
-Read every existing file under .github/ before writing. Look up
-each action's latest release and its commit SHA in the action's
-own repository. Then produce the deliverables listed at the end.
-If you have a shell, validate the YAML with actionlint and follow
-<verification>. Otherwise, review the file against the rules below.
+Write one file, .github/workflows/ci.yml. It lints, checks, tests,
+versions, builds, and releases a Rust workspace that has multiple
+components and multiple target triples. The workspace uses
+cargo-hakari (a workspace-hack crate). Fill <config> from the
+workspace itself: read every Cargo.toml and the output of
+cargo metadata --locked. Look up each action's latest release and
+its commit SHA in the action's own repository. Then produce the
+deliverables listed at the end. If you have a shell, validate the
+YAML with actionlint and follow <verification>. Otherwise, review
+the file against the rules below.
 </task>
 
 <goal>
@@ -37,31 +36,23 @@ only when the event and the diff make it relevant. This keeps cost
 low and prevents multi-hour builds. The same stages exist in the
 local script scripts/check gate, so a green local gate predicts a
 green CI run.
-
-The user read this prompt and chose to run it, so its requirements
-are approved: they describe the state the repository must reach.
-Bring it there in this run and record each judgment call so the
-user can review it afterwards. The repository may be new or
-existing. In a new one, build that state directly. In an existing
-one, bring it into line: keep what already meets this prompt,
-reshape what conflicts so it runs production-ready, and add what is
-missing. Every existing workflow, job, and feature was built for a
-purpose, so change how it runs and keep what it does.
 </goal>
 
 <hard_rules>
-Apply every rule to every job and every existing workflow, not only
-the first one. Follow each rule and its reason.
-1. ci.yml is the one workflow for linting, checking, testing,
-   versioning, building, and releasing. Reason: one pipeline is the
-   only place where ordering and cost can be reasoned about.
-2. ci.yml triggers on exactly pull_request, push to main, and
-   merge_group. Reason: the pipeline must be purely event-driven.
-3. Dependency updates stay manual. Reason: the requirements call for
-   one event-driven pipeline with no bots.
+Apply every rule to every job, not only the first one. Follow each
+rule and its reason.
+1. One workflow file, no others. Reason: one pipeline is the only
+   place where ordering and cost can be reasoned about.
+2. Triggers: pull_request, push to main, merge_group. No schedule,
+   cron, polling, workflow_run, or workflow_dispatch. Reason: the
+   pipeline must be purely event-driven.
+3. Dependency updates stay manual: add no Dependabot, Renovate,
+   or other bot config. Reason: the requirements call for one
+   event-driven pipeline with no bots.
 4. This pipeline does all versioning and releasing, from git tags
-   only. Reason: one source of truth keeps versions consistent and
-   makes re-runs safe.
+   only: no manual version bumps and no external release tools.
+   Reason: one source of truth keeps versions consistent and makes
+   re-runs safe.
 5. Timeouts (timeout-minutes): changes 5, gates 10,
    check-targets 15, test 20, msrv 15, warm-cache 20, version 5,
    build 30, release 10, ci-ok 5. Reason: a hung job must not
@@ -75,70 +66,34 @@ the first one. Follow each rule and its reason.
    contents: write. Reason: least privilege; a compromised step in
    any other job cannot write to the repository.
 8. Pin every third-party action to a full commit SHA with a
-   version comment. Checkout uses persist-credentials: false. If
-   the repository already has a workflow dependency lockfile
-   (.github/workflows/actions.lock), keep it, pin by SHA as well,
-   and record it under Decisions. Reason: supply-chain safety; the
-   lockfile is in public preview and subject to change, and GitHub
-   recommends SHA pins where no lockfile is used.
+   version comment. Checkout uses persist-credentials: false.
+   Create no workflow dependency lockfile
+   (.github/workflows/actions.lock). Reason: supply-chain safety;
+   the lockfile is in public preview and subject to change, and
+   GitHub recommends SHA pins where no lockfile is used. If the
+   repository already has that lockfile, stop and report it.
 9. Every cargo command uses --locked. Reason: CI must fail if
    Cargo.lock is out of date.
 10. Cheap jobs run first. Each expensive job lists the cheaper
     jobs in needs:. Reason: a job whose needed job fails is
     skipped, so a cheap failure stops the expensive jobs.
 11. The workspace uses cargo-hakari. Every cargo command selects
-    crates with -p or --workspace. Change
-    workspace-hack/Cargo.toml only through cargo hakari commands.
-    Exclude the workspace-hack package from every -p list. Reason:
-    the workspace-hack crate keeps the dependency feature set
-    identical for -p and --workspace runs, so caches warmed on main
-    by full-workspace runs are fully reused by affected-only runs
-    on pull requests.
-12. When a rule conflicts with real GitHub behavior, follow GitHub's
-    actual behavior in the way that best serves the rule's reason,
-    and record the conflict under Decisions. Reason: a silent
-    workaround hides a broken rule from the user.
-13. Make every judgment call yourself and keep working. When this
-    prompt leaves a choice open, decide from these sources, in
-    order: (a) this prompt's explicit requirements; (b) the reason
-    on the closest rule, which names what that rule protects;
-    (c) the repository's own evidence: CLAUDE.md, README,
-    manifests, lockfiles, existing workflows and scripts, code
-    style, and git history; (d) the tool's documented default;
-    (e) of the options left, the one easiest to undo. Where this
-    prompt and the repository disagree, follow this prompt and
-    write the result in the repository's existing style. Record
-    each call under Decisions. Reason: the user approved this
-    prompt by running it and reviews decisions after the run, and
-    these sources already answer what a mid-run question would ask.
-14. Keep every behavior the repository already has. When an
-    existing workflow, job, script stage, setting, or feature
-    conflicts with this prompt, reshape it to meet the prompt and
-    keep what it does: change its trigger, scope, order, or
-    location. Remove an existing item only when your output now
-    does the same work, and record where. <not_included> limits
-    what you add; existing items it names stay. Reason: existing
-    work was built for a purpose this prompt may not mention, and
-    production-ready means reshaped, with every feature kept.
-15. Make each change the smallest one that reaches the target and
-    can be undone. Edit existing files in place. Merge required
-    keys into an existing config file and keep its other keys.
-    Move or rename files with git mv. Before changing a file that
-    has uncommitted changes or is untracked, copy it to
-    ~/recipe-backups/<repository name>/<YYYY-MM-DD>/ and report
-    the path. Leave your changes uncommitted in the working tree
-    with a suggested commit message, so git history stays as it
-    is. Pushes, tags, and releases happen after the user reviews
-    and merges the changes. Reason: git restores only committed
-    content, and this way every change stays reviewable with
-    git diff and reversible in one step.
-16. Take every crate name, path, runner label, version, and action
-    SHA from the repository or the tool's own source. When one
-    cannot be found here, write a comment starting BLOCKED: that
-    names the value and where to find it, finish every other part,
-    and list it under Blocked. Reason: an invented value breaks
-    the workflow on its first run, while a marked gap is found at
-    once.
+    crates with -p or --workspace. Never hand-edit
+    workspace-hack/Cargo.toml. Exclude the workspace-hack package
+    from every -p list. Reason: the workspace-hack crate keeps the
+    dependency feature set identical for -p and --workspace runs,
+    so caches warmed on main by full-workspace runs are fully
+    reused by affected-only runs on pull requests.
+12. If any rule conflicts with real GitHub behavior, stop and
+    state the conflict. Reason: a silent workaround hides a broken
+    rule from the user.
+13. Ask before deleting files, rewriting git history, pushing,
+    creating tags, or publishing. Reason: these actions are hard
+    to reverse or visible to others.
+14. Never invent crate names, paths, runner labels, versions, or
+    action SHAs. Reason: an invented SHA or crate name breaks the
+    workflow on its first run. If you cannot look one up, stop and
+    report which one.
 </hard_rules>
 
 <config>
@@ -175,7 +130,7 @@ TARGETS: {"name":"linux-arm","triple":"aarch64-unknown-linux-gnu",
 "tested":false,"paths":["**/sys/linux/**"]}
 </example>
 <example>
-A shared library with no release of its own:
+A shared library that is never released on its own:
 COMPONENTS: {"name":"core","paths":["crates/core/**"],
 "crates":["core","core-types"],"targets":[
 "x86_64-unknown-linux-gnu"],"versioned":false,"publish":false}
@@ -187,9 +142,8 @@ TARGETS: {"name":"linux","triple":"x86_64-unknown-linux-gnu",
 </config>
 
 <shared_config_files>
-Both files are shared with the local script scripts/check. Create
-each one if it is missing. If it exists, merge in the keys below
-and keep its other keys.
+Create these files only if they do not already exist. Both are
+shared with the local script scripts/check.
 
 .cargo/config.toml
 - [profile.dev]: debug = "line-tables-only"
@@ -215,14 +169,13 @@ and keep its other keys.
 </shared_config_files>
 
 <skip_logic>
-- Leave paths and paths-ignore off the triggers, so the workflow
-  always starts.
+- Do not use paths-ignore on triggers. The workflow always starts.
 - The changes job sets skip=true when every changed file matches
   docs/**, **/*.md, LICENSE*, or .github/ISSUE_TEMPLATE/**.
 - When skip=true, every job except changes and ci-ok is skipped,
   and ci-ok reports success.
-- Skip runs only through the changes job's file check. GitHub
-  natively drops runs containing [skip ci], [ci skip], [no ci],
+- Do not implement a commit-message skip token. GitHub natively
+  drops runs containing [skip ci], [ci skip], [no ci],
   [skip actions], [actions skip], or a skip-checks: trailer, which
   leaves required checks pending and blocks merges. The commit
   lint on pull requests must reject those strings.
@@ -298,8 +251,8 @@ Create these jobs in order.
 
 6. warm-cache (needs: gates; push to main only; skip=false)
    - Purpose: save the caches that pull_request and merge_group
-     runs restore. Tests already passed in the merge queue, so this
-     job compiles only.
+     runs restore. Tests already passed in the merge queue, so do
+     not run them.
    - For all components (ignore the affected filter), per target:
      cargo check --target <triple> and
      cargo nextest run --no-run (host triple only, on targets with
@@ -314,11 +267,10 @@ Create these jobs in order.
      refactor, build, and revert = no release.
    - Components with no releasable commits are excluded. If none
      remain, output release=false.
-   - Versions live only in tags and build environment variables,
-     so this job commits nothing to main and leaves Cargo.toml
-     versions as they are.
+   - Never commit to main. No version-bump commits.
    - Pass versions to builds as CI_VERSION_<COMPONENT_NAME>
      environment variables, read by that component's build.rs.
+     Do not edit Cargo.toml in the repo.
    - If a tag already exists, reuse it and continue. Re-runs must
      succeed.
    - Output the release matrix: per target, the released
@@ -346,7 +298,7 @@ Create these jobs in order.
      0.9.9 or newer) targets the empty workspace-hack crate
      already on crates.io.
    - Comment in the file: tags and releases created with
-     GITHUB_TOKEN start no new workflow runs, so there is no loop.
+     GITHUB_TOKEN do not trigger workflows, so there is no loop.
 
 10. ci-ok (needs: all jobs above; if: always())
     - The only required status check for branch protection and the
@@ -359,13 +311,13 @@ Create these jobs in order.
 <cache>
 - Use Swatinem/rust-cache on every Rust job. It already hashes
   Cargo manifests, lockfiles, and toolchain files into the key,
-  so the key needs nothing added for them.
+  so do not add those yourself.
 - shared-key = "<target-triple>-<job-type>", where job-type is one
   of lint, check, test, msrv, release. Reason: each job type
   compiles different artifacts, and sharing one key across them
   causes cache hits that still rebuild.
-- Matrix legs are per target only, so no two legs write the same
-  key.
+- Matrix legs are per target, never per component, so no two
+  legs write the same key.
 - save-if: github.ref == 'refs/heads/main'. Pull requests and the
   merge queue only restore. They fall back to main's caches.
 - The gates, msrv, and warm-cache jobs on main run with all
@@ -379,114 +331,71 @@ Create these jobs in order.
 
 <build_cost>
 - rust-toolchain.toml pins the toolchain and lists all targets.
-- Set CARGO_INCREMENTAL=0 in the workflow env. Take every profile
-  setting from the committed .cargo/config.toml alone.
-- Leave RUSTFLAGS unset in the workflow. Reason: it replaces
+- Set CARGO_INCREMENTAL=0 in the workflow env. Take all profile
+  settings from the committed .cargo/config.toml. Do not repeat
+  them in env.
+- Never set RUSTFLAGS in the workflow. Reason: it replaces
   rustflags from .cargo/config.toml. Pass -D warnings to clippy
   after --.
-- Take every linker setting from .cargo/config.toml. From Rust
-  1.90, x86_64-unknown-linux-gnu links with rust-lld, which rustup
-  ships. On a native Linux job whose triple has linker settings
-  there, run sudo apt-get install -y clang lld before building.
+- Set no linker in the workflow. From Rust 1.90,
+  x86_64-unknown-linux-gnu links with rust-lld, which rustup ships;
+  every other linker setting comes from .cargo/config.toml. On a
+  native Linux job whose triple has linker settings there, run
+  sudo apt-get install -y clang lld before building.
 - Install cargo-nextest, cargo-deny, cargo-hakari, and
-  cargo-zigbuild with taiki-e/install-action, which installs
-  prebuilt binaries instead of compiling them with cargo install.
+  cargo-zigbuild with taiki-e/install-action. Never use
+  cargo install.
 - Every matrix sets fail-fast: true and max-parallel: 6.
 </build_cost>
-
-<decision_examples>
-How hard rules 13 to 15 settle open points. The repository facts
-are illustrative; take real ones from the repository.
-<example>
-Open point: .github/workflows/integration.yml runs tests against a
-Postgres service container, and no job in this prompt covers them.
-Evidence: its steps and its services block.
-Choice: add an integration job to ci.yml (needs: gates;
-pull_request and merge_group; timeout 20) with the same service,
-SHA-pinned actions, and --locked; then git rm integration.yml,
-since ci.yml now does its work.
-Undo: git restore integration.yml and delete the job.
-</example>
-<example>
-Open point: .github/workflows/docs.yml deploys documentation on
-push to main and on workflow_dispatch.
-Evidence: it deploys rather than checks, and it needs
-workflow_dispatch, which ci.yml leaves out by hard rule 2.
-Choice: keep docs.yml as it is; ci.yml covers CI only. List SHA
-pinning for docs.yml under possible improvements.
-Undo: nothing to undo.
-</example>
-<example>
-Open point: the default branch is master, and this prompt says
-main.
-Evidence: git ls-remote --symref origin HEAD prints
-ref: refs/heads/master.
-Choice: use master wherever this prompt says main, including the
-save-if condition.
-Undo: replace master with main in ci.yml.
-</example>
-</decision_examples>
 
 <verification>
 If you have a shell:
 1. Run actionlint on ci.yml and fix every finding.
-2. Confirm by search: no schedule or workflow_dispatch trigger in
-   ci.yml, every job has timeout-minutes, every third-party action
-   is pinned to a full SHA, no RUSTFLAGS, and every cargo command
-   has --locked.
+2. Confirm by search: no schedule or workflow_dispatch trigger,
+   every job has timeout-minutes, every third-party action is
+   pinned to a full SHA, no RUSTFLAGS, and every cargo command has
+   --locked.
 3. Confirm that no two matrix legs can write the same rust-cache
    shared-key.
-4. Confirm by listing .github/workflows/ before and after that
-   every removed workflow's work now runs in ci.yml.
-5. Delete any temporary files you created for these checks.
-6. Report the actual output of each check.
-If you have no shell, state that the file is unvalidated. Report a
-check as passed only after running it. When a check fails, fix
-ci.yml and keep the check as written.
+4. Delete any temporary files you created for these checks.
+5. Report the actual output of each check.
+If you have no shell, state that the file is unvalidated. Never
+claim a check passes without having run it. When a check fails,
+fix ci.yml, never the check.
 </verification>
 
 <not_included>
-Add only the jobs above. Leave out miri, fuzzing, benchmarks,
+Include only the jobs above. Leave out miri, fuzzing, benchmarks,
 coverage, scheduled or nightly checks, tests for zigbuild targets,
-release dry runs in the merge queue, Dependabot, Renovate, or other
-update-bot config, manual version bumps, external release tools,
-and a workflow dependency lockfile. This list limits what you add;
-under hard rule 14, existing items it names stay.
+and release dry runs in the merge queue.
 </not_included>
 
 <deliverables>
-Done when the repository matches this prompt and the verification
-results are reported. Keep working until then, making each
-judgment call under hard rule 13. Then stop and report. Produce
-these in this order:
-1. The complete ci.yml with brief comments. Its only unfilled
-   values are BLOCKED: comments under hard rule 16.
-2. Each shared config file from <shared_config_files> that you
-   created or changed.
+Done when all of these are produced and the verification results
+are reported. Keep working until then; stop to ask only when you
+cannot continue without the user or before an action in hard rule
+13. Then stop and report. Mention possible improvements at the end
+instead of making them. Produce them in this order:
+1. The complete ci.yml with brief comments and no placeholders.
+2. Any shared config file from <shared_config_files> that did not
+   already exist.
 3. A table: job | trigger event | components and targets covered |
    expected runtime | what it catches.
 4. A table of events (pull_request, merge_group, push to main with
    docs-only, push to main with code), each marked skip, check
    only, test, cache warm, or release.
-5. The list of targets that are built but not tested.
+5. The list of targets that are built but never tested.
 6. Two sentences on how to cut a release: merge a feat or fix
    commit to main.
 7. One sentence confirming the one-time hakari setup
    (cargo hakari init, manage-deps, generate) is committed
    before this workflow is enabled.
-8. Decisions: a table of open point | evidence | choice | how to
-   undo. Include every existing workflow, job, or setting you
-   kept, reshaped, moved, or folded into ci.yml.
-9. Blocked: each BLOCKED: value and where to find it, or "none".
-10. The suggested commit message and the path of every backup
-    made under hard rule 15.
-11. Possible improvements beyond this prompt, one line each.
 </deliverables>
 ```
 
 ## Usage
 
-Paste the prompt into a Claude session opened in the Rust repository, new or existing.
+Paste the prompt into a Claude session opened in the Rust repository.
 A shell lets the session run actionlint and the verification checks.
 Commit the one-time cargo-hakari setup before enabling the workflow.
 Run rust-local-check-script in the same repository to keep both in parity.
