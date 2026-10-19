@@ -4,7 +4,7 @@ slug: rust-local-check-script
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 requires: shell with git, jq, cargo, cargo-nextest, cargo-hakari, shellcheck (clang and lld for linker settings)
 pairs_with: rust-ci-github-actions
 ---
@@ -13,8 +13,9 @@ pairs_with: rust-ci-github-actions
 
 ```
 <role>
-You are a senior Rust build-tooling engineer who writes fast,
-dependable developer scripts for large Cargo workspaces.
+You are the lead Rust build-tooling engineer for this workspace,
+with full authority over its developer scripts and ownership of
+every judgment call in this run.
 </role>
 
 <task>
@@ -24,29 +25,40 @@ depends on: .cargo/config.toml, .config/nextest.toml, and
 with multiple components, and the workspace uses cargo-hakari (a
 workspace-hack crate). Fill <config> from the workspace itself:
 read every Cargo.toml and the output of cargo metadata --locked.
-Then produce the deliverables listed at the end.
+Read any existing scripts/check, Makefile, justfile, and
+.cargo/config.toml before writing. Then produce the deliverables
+listed at the end.
 </task>
 
 <goal>
 Deliver the fastest possible signal when something is wrong, and
-never let a bad change pass unnoticed. Reason: slow or noisy
-feedback makes developers skip checks, and a green result that
-verified too little ships bugs. So the script has a scoped fast
-mode for iteration and a full gate mode for before pushing, and
-every green fast run states what it did not verify. Gate mode runs
-the same stages as the CI pipeline, so a green local gate predicts
-a green CI run.
+catch every bad change. Reason: slow or noisy feedback makes
+developers skip checks, and a green result that verified too
+little ships bugs. So the script has a scoped fast mode for
+iteration and a full gate mode for before pushing, and every green
+fast run states what it did not verify. Gate mode runs the same
+stages as the CI pipeline, so a green local gate predicts a green
+CI run.
+
+The user read this prompt and chose to run it, so its requirements
+are approved: they describe the state the repository must reach.
+Bring it there in this run and record each judgment call so the
+user can review it afterwards. The repository may be new or
+existing. In a new one, build that state directly. In an existing
+one, bring it into line: keep what already meets this prompt,
+reshape what conflicts so it runs production-ready, and add what is
+missing. Every existing script stage, setting, and feature was
+built for a purpose, so change how it runs and keep what it does.
 </goal>
 
 <hard_rules>
-Apply every rule to all three modes (fast, gate, build), not only
-the first one.
-1. Stable Rust only. No nightly flags, no cranelift, no unstable
-   Cargo options. Reason: the script must run unchanged on every
-   machine.
+Apply every rule to all three modes (fast, gate, build) and to
+every existing script stage and setting, not only the first one.
+1. Stable Rust only: stable flags and stable Cargo options. Reason:
+   the script must run unchanged on every machine.
 2. Bash 3.2 compatible (macOS default) and Linux. Use
-   set -euo pipefail. No associative arrays. Use jq for JSON.
-   The script must pass shellcheck with no warnings. Reason: the
+   set -euo pipefail, indexed arrays only, and jq for JSON. The
+   script must pass shellcheck with no warnings. Reason: the
    script must run unchanged on every developer machine.
 3. Fail fast. The first failing stage stops the script
    immediately, kills background lanes, and exits 1. The flag
@@ -55,13 +67,13 @@ the first one.
    waiting.
 4. Order stages cheapest to costliest. Reason: the quickest
    failure surfaces first.
-5. Never run two cargo build, check, clippy, or test commands at
-   the same time against the same target dir. Reason: Cargo
-   serializes them on the build lock, so concurrency only adds
-   waiting. Only non-compiling tools (cargo fmt, cargo deny,
-   cargo hakari, git) run in the background beside a compiling
-   lane. Run cross-target checks one after another, because one
-   cargo process already uses all cores.
+5. Run one compiling cargo command (build, check, clippy, or test)
+   at a time against a target dir. Reason: Cargo serializes them
+   on the build lock, so concurrency only adds waiting. Only
+   non-compiling tools (cargo fmt, cargo deny, cargo hakari, git)
+   run in the background beside a compiling lane. Run cross-target
+   checks one after another, because one cargo process already
+   uses all cores.
 6. Use one target dir for every mode: target/check. Reason: the
    workspace-hack crate pins the dependency feature set, so scoped
    (-p) and workspace commands reuse each other's compiled
@@ -71,27 +83,63 @@ the first one.
 7. Every cargo command uses --locked. A stale Cargo.lock fails
    the run. Reason: CI uses --locked too, so a stale lock file
    must fail here first.
-8. Never set the RUSTFLAGS environment variable. Pass -D warnings
-   to clippy after --. Reason: RUSTFLAGS replaces rustflags from
-   .cargo/config.toml and changes fingerprints.
-9. Keep the real repo's target dirs between runs: never run
-   cargo clean and never delete them. Reason: Cargo stores build
-   output there, and reusing it is what keeps reruns fast.
+8. Leave the RUSTFLAGS environment variable unset. Pass
+   -D warnings to clippy after --. Reason: RUSTFLAGS replaces
+   rustflags from .cargo/config.toml and changes fingerprints.
+9. Keep the real repo's target dirs between runs: the script
+   leaves them in place and runs no cargo clean. Reason: Cargo
+   stores build output there, and reusing it is what keeps reruns
+   fast.
 10. Change workspace-hack/Cargo.toml only through cargo hakari
-    commands, never by hand. Reason: cargo hakari generates that
-    file, and the hakari lane fails on any drift from its output.
+    commands. Reason: cargo hakari generates that file, and the
+    hakari lane fails on any drift from its output.
 11. Exit codes: 0 pass or skip, 1 check failed, 2 usage error or
     missing tool. Reason: callers can tell a failed check from a
     broken setup.
-12. Implement only what this prompt specifies. Reason: every extra
-    stage costs time on every run.
-13. Ask before deleting files, rewriting git history, pushing, or
-    committing in the real repo. Running the cargo hakari setup
-    commands in <hakari_setup> is allowed. Reason: these actions
-    are hard to reverse or visible to others.
-14. Never invent crate names, paths, triples, or versions. Reason:
-    an invented name makes the script fail on its first run. If you
-    cannot find one, stop and report which one.
+12. Add only the stages this prompt specifies, plus the existing
+    stages hard rule 14 keeps. Reason: every extra stage costs
+    time on every run.
+13. Make every judgment call yourself and keep working. When this
+    prompt leaves a choice open, decide from these sources, in
+    order: (a) this prompt's explicit requirements; (b) the reason
+    on the closest rule, which names what that rule protects;
+    (c) the repository's own evidence: CLAUDE.md, README,
+    manifests, lockfiles, existing workflows and scripts, code
+    style, and git history; (d) the tool's documented default;
+    (e) of the options left, the one easiest to undo. Where this
+    prompt and the repository disagree, follow this prompt and
+    write the result in the repository's existing style. Record
+    each call under Decisions. Reason: the user approved this
+    prompt by running it and reviews decisions after the run, and
+    these sources already answer what a mid-run question would ask.
+14. Keep every behavior the repository already has. When an
+    existing workflow, job, script stage, setting, or feature
+    conflicts with this prompt, reshape it to meet the prompt and
+    keep what it does: change its trigger, scope, order, or
+    location. Remove an existing item only when your output now
+    does the same work, and record where. <not_included> limits
+    what you add; existing items it names stay. Reason: existing
+    work was built for a purpose this prompt may not mention, and
+    production-ready means reshaped, with every feature kept.
+15. Make each change the smallest one that reaches the target and
+    can be undone. Edit existing files in place. Merge required
+    keys into an existing config file and keep its other keys.
+    Move or rename files with git mv. Before changing a file that
+    has uncommitted changes or is untracked, copy it to
+    ~/recipe-backups/<repository name>/<YYYY-MM-DD>/ and report
+    the path. Leave your changes uncommitted in the working tree
+    with a suggested commit message, so git history stays as it
+    is. Pushes, tags, and releases happen after the user reviews
+    and merges the changes. Running the cargo hakari setup
+    commands in <hakari_setup> is part of this run. Reason: git
+    restores only committed content, and this way every change
+    stays reviewable with git diff and reversible in one step.
+16. Take every crate name, path, triple, and version from the
+    repository or the tool's own source. When one cannot be found
+    here, write a comment starting BLOCKED: that names the value
+    and where to find it, finish every other part, and list it
+    under Blocked. Reason: an invented value makes the script fail
+    on its first run, while a marked gap is found at once.
 </hard_rules>
 
 <config>
@@ -163,9 +211,9 @@ the user.
    workspace-hack was created by cargo-hakari 0.9.9 or newer. That
    version targets the empty workspace-hack crate already on
    crates.io, so cargo publish needs no special handling. If it
-   was created by an older version, tell the user and point to the
-   publishing section of the cargo-hakari documentation. Do not
-   change publish settings yourself.
+   was created by an older version, report it with a pointer to
+   the publishing section of the cargo-hakari documentation, and
+   leave publish settings as they are.
 </hakari_setup>
 
 <change_detection>
@@ -254,6 +302,9 @@ the user.
 </modes>
 
 <config_files>
+Create each file if it is missing. If it exists, merge in the keys
+below and keep its other keys.
+
 .cargo/config.toml
 - [profile.dev]: debug = "line-tables-only"
 - [profile.dev.package."*"]: debug = false
@@ -307,16 +358,48 @@ the user.
   --force, --target (build mode only).
 </output_format>
 
+<decision_examples>
+How hard rules 13 to 15 settle open points. The repository facts
+are illustrative; take real ones from the repository.
+<example>
+Open point: the existing scripts/check runs
+cargo sqlx prepare --check, a stage this prompt does not list.
+Evidence: the repository uses sqlx offline mode (.sqlx/ is
+committed).
+Choice: keep it as a gate-mode stage named sqlx after clippy, in
+the [run]/[ok]/[FAIL] format, and in fast mode when a changed file
+is under .sqlx/ or migrations/.
+Undo: delete the sqlx stage function and its two calls.
+</example>
+<example>
+Open point: .cargo/config.toml already has an [alias] section and
+a [build] jobs setting.
+Evidence: the file is committed and the aliases appear in the
+README.
+Choice: add the [profile.dev] keys and linker settings, and keep
+[alias] and [build] as they are.
+Undo: git restore .cargo/config.toml.
+</example>
+<example>
+Open point: the default branch is master, and BASE_REF defaults to
+origin/main.
+Evidence: git ls-remote --symref origin HEAD prints
+ref: refs/heads/master.
+Choice: set BASE_REF to "origin/master".
+Undo: change the one BASE_REF line.
+</example>
+</decision_examples>
+
 <verification>
 If you have a shell:
 1. Run shellcheck on scripts/check and fix every warning.
-2. In a scratch workspace in a temporary directory, never in the
+2. In a scratch workspace in a temporary directory outside the
    real repo, with three crates (a, b depends on a, c depends on
    b) and a workspace-hack crate, verify:
    - a docs-only change exits 0 immediately;
    - a change in a reports a, b, c as affected;
-   - a deliberate clippy warning stops at clippy, never starts
-     nextest, and exits 1;
+   - a deliberate clippy warning stops at clippy and exits 1
+     before nextest starts;
    - a deliberately failing test fails in nextest and prints the
      Rerun line;
    - adding a dependency to one crate without running cargo hakari
@@ -329,27 +412,30 @@ If you have a shell:
      commit lint;
    - gate mode passes on a clean tree.
 3. Run scripts/check gate in the real repo and report its result.
+   Confirm every stage of any previous scripts/check still runs.
 4. Delete the scratch workspace.
 5. Report the actual output of each check.
-If you have no shell, state that the script is untested. Never
-claim a check passes without having run it. When a check fails,
-fix the script, never the check, and make the script work for
+If you have no shell, state that the script is untested. Report a
+check as passed only after running it. When a check fails, fix the
+script, keep the check as written, and make the script work for
 every workspace that matches <config>, not only the scratch one.
 </verification>
 
 <not_included>
 Watch mode, coverage, miri, fuzzing, benchmarks, sccache, nightly
 features, cranelift, automatic tool installation, git hook
-installation, CI workflows, versioning, and releasing.
+installation, CI workflows, versioning, and releasing. This list
+limits what you add; under hard rule 14, existing items it names
+stay.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then; stop to ask only when you
-cannot continue without the user or before an action in hard rule
-13. Then stop and report. Mention possible improvements at the end
-instead of making them. Produce them in this order:
-1. scripts/check, complete and commented, with no placeholders.
+Done when the repository matches this prompt and the verification
+results are reported. Keep working until then, making each
+judgment call under hard rule 13. Then stop and report. Produce
+these in this order:
+1. scripts/check, complete and commented. Its only unfilled values
+   are BLOCKED: comments under hard rule 16.
 2. .cargo/config.toml, .config/nextest.toml, and
    .config/hakari.toml.
 3. The one-time hakari setup commands, marked as already run or
@@ -362,12 +448,19 @@ instead of making them. Produce them in this order:
    rust-analyzer.cargo.targetDir at its own directory so the IDE
    does not block the script; the first build is slower because
    workspace-hack compiles more dependencies up front.
+7. Decisions: a table of open point | evidence | choice | how to
+   undo. Include every existing stage or setting you kept,
+   reshaped, or moved.
+8. Blocked: each BLOCKED: value and where to find it, or "none".
+9. The suggested commit message and the path of every backup made
+   under hard rule 15.
+10. Possible improvements beyond this prompt, one line each.
 </deliverables>
 ```
 
 ## Usage
 
-Paste the prompt into a Claude session opened in the Rust repository.
+Paste the prompt into a Claude session opened in the Rust repository, new or existing.
 The session needs the tools listed under requires to verify its work.
 Gate mode runs the same stages as rust-ci-github-actions.
 Run scripts/check while iterating and scripts/check gate before pushing.

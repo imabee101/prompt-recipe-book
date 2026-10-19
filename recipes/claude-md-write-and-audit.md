@@ -4,7 +4,7 @@ slug: claude-md-write-and-audit
 target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
-last_verified: 2026-10-18
+last_verified: 2026-10-19
 requires: shell and web fetch (both optional; the prompt carries a dated spec)
 pairs_with: none
 ---
@@ -13,18 +13,19 @@ pairs_with: none
 
 ```
 <role>
-You are a senior developer-experience engineer who writes and
-maintains CLAUDE.md files for Claude Code, following Anthropic's
-documentation.
+You are the lead developer-experience engineer for this repository
+and the final decision-maker on its CLAUDE.md, following Anthropic's
+documentation and owning every judgment call in this run.
 </role>
 
 <task>
 Write or audit the project CLAUDE.md for the repository in the
 current working directory. If a committed CLAUDE.md exists with no
 uncommitted changes, audit it and rewrite it in place, because git
-keeps the committed version. If it has uncommitted changes, ask
-before rewriting it. If none exists, create one. Then produce the
-deliverables listed at the end.
+keeps the committed version. If it has uncommitted changes, back it
+up under hard rule 14, then audit and rewrite it, treating the
+uncommitted lines as candidates like any other. If none exists,
+create one. Then produce the deliverables listed at the end.
 </task>
 
 <goal>
@@ -32,6 +33,14 @@ Give Claude the smallest set of facts that change its behavior in
 every session, so it follows them reliably. Reason: CLAUDE.md loads
 into context every session, long files lower adherence, and bloat
 makes Claude ignore the rules that matter.
+
+The user read this prompt and chose to run it, so its requirements
+are approved: they describe the state CLAUDE.md must reach. Bring it
+there in this run and record each judgment call so the user can
+review it afterwards. The repository may be new or existing. Every
+line already in CLAUDE.md was written for a purpose, so a line that
+leaves CLAUDE.md goes to a destination in the report, and nothing
+the team wrote is lost.
 </goal>
 
 <hard_rules>
@@ -41,8 +50,8 @@ create, not only the first one.
    more context and reduce adherence.
 2. Keep a line only if removing it would cause Claude to make
    mistakes. Reason: bloated files get partly ignored.
-3. Use markdown headers and bullets. Do not use XML tags or dense
-   paragraphs. Reason: Claude scans structure the way a reader
+3. Use markdown headers and short bullets, without XML tags or
+   dense paragraphs. Reason: Claude scans structure the way a reader
    does, and organized sections are easier to follow.
 4. Make every instruction concrete enough to verify. Write
    "Run cargo nextest run before committing", not "test your
@@ -50,31 +59,57 @@ create, not only the first one.
    more reliably than a vague one.
 5. Remove contradictions. Reason: when two rules conflict, Claude
    may pick one arbitrarily.
-6. Never rely on CLAUDE.md to enforce a rule. If a rule must hold
-   every time, propose a hook or a permissions deny rule. Reason:
+6. Treat CLAUDE.md as guidance only. If a rule must hold every
+   time, propose a hook or a permissions deny rule. Reason:
    CLAUDE.md is context delivered as a user message, with no
    guarantee of strict compliance.
-7. Never use @imports to shrink the file. Reason: imported files
-   still load at launch. To cut context, use path-scoped rules,
-   nested CLAUDE.md files, or skills.
+7. Cut context with path-scoped rules, nested CLAUDE.md files, or
+   skills; keep @imports for sharing a file, such as @AGENTS.md.
+   Reason: imported files still load at launch, so an import
+   saves no context.
 8. Use emphasis such as "IMPORTANT" only on a line Claude has been
    observed to skip, and only on that line. Reason: when many
    lines are emphasized, none stands out.
 9. Put maintainer-only notes in block-level HTML comments. Reason:
    they are stripped before the file enters context, so they cost
    nothing.
-10. Never write secrets, tokens, personal paths, or personal
-    preferences into the project file. Personal project-specific
+10. Keep secrets, tokens, personal paths, and personal
+    preferences out of the project file. Personal project-specific
     preferences go in CLAUDE.local.md, which is gitignored.
     Reason: the project file is committed, so everyone who clones
     the repository receives its contents.
-11. Never invent commands, paths, or environment variables. Run
-    or check each one, or omit it. Reason: every later session
+11. Write only commands, paths, and environment variables you ran
+    or checked. Reason: every later session
     trusts the file, so one wrong command repeats in each of them.
-12. Ask before deleting files, rewriting git history, or
-    overwriting uncommitted changes. Writing a committed CLAUDE.md
-    in place is allowed. Reason: those actions are hard to
-    reverse.
+12. Make every judgment call yourself and keep working. When this
+    prompt leaves a choice open, decide from these sources, in
+    order: (a) this prompt's explicit requirements; (b) the reason
+    on the closest rule, which names what that rule protects;
+    (c) the repository's own evidence: the existing CLAUDE.md,
+    README, manifests, CI config, scripts, and git history;
+    (d) Claude Code's documented default from <spec>; (e) of the
+    options left, the one easiest to undo. Where this prompt and
+    the repository disagree, follow this prompt and keep the
+    repository's terms and commands. Record each call under
+    Decisions. Reason: the user approved this prompt by running it
+    and reviews decisions after the run, and these sources already
+    answer what a mid-run question would ask.
+13. Give every line you remove from CLAUDE.md a destination in the
+    audit table: delete (with the reason), a proposed rule, skill,
+    or hook, or the file it duplicates. Keep AGENTS.md and every
+    other file as it is. Reason: existing lines were written for a
+    purpose, and the user wants CLAUDE.md reshaped, not
+    knowledge lost.
+14. Make each change the smallest one that reaches the target and
+    can be undone. Edit CLAUDE.md in place and append to
+    .gitignore. Before changing a file that has uncommitted changes
+    or is untracked, copy it to
+    ~/recipe-backups/<repository name>/<YYYY-MM-DD>/ and report the
+    path. Leave your changes uncommitted in the working tree with a
+    suggested commit message, so git history stays as it is.
+    Reason: git restores only committed content, and this way every
+    change stays reviewable with git diff and reversible in one
+    step.
 </hard_rules>
 
 <spec>
@@ -110,8 +145,8 @@ have a web fetch tool, re-fetch the three pages listed under
   loads when Claude reads a matching file.
 - Compaction: the project-root CLAUDE.md is re-read from disk after
   /compact. Instructions given only in conversation are lost.
-- Edits: changes to the project-root or user CLAUDE.md do not
-  reach a running session until /clear, /compact, or a restart.
+- Edits: changes to the project-root or user CLAUDE.md reach a
+  running session only after /clear, /compact, or a restart.
 - Debugging: /context lists loaded memory files; /memory opens
   them; /doctor proposes trims for content Claude can derive from
   the codebase; /doctor prompt-audit (Claude Code v2.1.283 or
@@ -139,8 +174,7 @@ Route each candidate instruction to exactly one place:
 - A personal preference: ~/.claude/CLAUDE.md, or CLAUDE.local.md
   for one project.
 - Organization-wide guidance: the managed CLAUDE.md.
-- Something Claude learns from corrections: leave it to auto
-  memory. Do not duplicate it in CLAUDE.md.
+- Something Claude learns from corrections: auto memory alone.
 - Access to an external service: an MCP server.
 </routing>
 
@@ -192,6 +226,33 @@ make migration NAME=<name>." | keep | a gotcha Claude cannot
 derive | CLAUDE.md
 </example>
 </examples>
+
+<decision_examples>
+How hard rules 12 to 14 settle open points. The repository facts
+are illustrative; take real ones from the repository.
+<example>
+Open point: AGENTS.md exists and no CLAUDE.md does.
+Evidence: <spec> says a new CLAUDE.md hides AGENTS.md from Claude
+Code.
+Choice: create CLAUDE.md starting with @AGENTS.md, add only
+Claude-specific lines below it, and keep AGENTS.md as it is.
+Undo: delete CLAUDE.md.
+</example>
+<example>
+Open point: CLAUDE.md holds a 40-line release procedure.
+Evidence: <routing> sends multi-step procedures to a skill.
+Choice: cut it from CLAUDE.md and put the full text in the report
+as a proposed skill, .claude/skills/release/SKILL.md.
+Undo: git restore CLAUDE.md.
+</example>
+<example>
+Open point: CLAUDE.md says "Run make test", and the Makefile has
+no test target, while the justfile has one.
+Evidence: just --list shows test, and CI runs just test.
+Choice: rewrite the line as "Run just test".
+Undo: git restore CLAUDE.md.
+</example>
+</decision_examples>
 
 <steps>
 1. Fetch the pages under <sources> when a web fetch tool exists.
@@ -252,24 +313,24 @@ If you have a shell:
    CLAUDE.md appears under Memory files, run /doctor, and ask a
    fresh session one question that only CLAUDE.md can answer.
 Report the actual output of each check. If you cannot run a
-check, say which one and why. Never claim a check passed without
-running it. When a check fails, fix CLAUDE.md, never the check.
+check, say which one and why. Report a check as passed only after
+running it. When a check fails, fix CLAUDE.md and keep the check as
+written.
 </verification>
 
 <not_included>
-Do not create skills, hooks, rules, or settings files; propose
-them in the report. Do not paste README text, directory trees,
-dependency lists, or documentation into CLAUDE.md. Do not edit any
-file except CLAUDE.md and .gitignore. Do not add sections beyond
-<content_rules>. Do not start extra review rounds.
+Edits to any file other than CLAUDE.md and .gitignore. New skills,
+hooks, rules, or settings files (propose them in the report).
+README text, directory trees, dependency lists, or documentation
+pasted into CLAUDE.md. Sections beyond <content_rules>. Extra
+review rounds.
 </not_included>
 
 <deliverables>
-Done when all of these are produced and the verification results
-are reported. Keep working until then; stop to ask only when you
-cannot continue without the user or before an action in hard rule
-12. Then stop and report. Mention possible improvements at the end
-instead of making them. Produce them in this order:
+Done when CLAUDE.md matches this prompt and the verification
+results are reported. Keep working until then, making each
+judgment call under hard rule 12. Then stop and report. Produce
+these in this order:
 1. CLAUDE.md, 200 lines or fewer.
 2. Audit mode: the audit table. Create mode: a table of line group
    | evidence (the file read or command run).
@@ -279,6 +340,11 @@ instead of making them. Produce them in this order:
 5. The verification output.
 6. Three sentences on maintenance: when to add, when to prune,
    and that root edits apply after /clear, /compact, or restart.
+7. Decisions: a table of open point | evidence | choice | how to
+   undo.
+8. The suggested commit message and the path of every backup made
+   under hard rule 14.
+9. Possible improvements beyond this prompt, one line each.
 </deliverables>
 ```
 

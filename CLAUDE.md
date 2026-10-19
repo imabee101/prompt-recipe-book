@@ -56,6 +56,12 @@ each rule to every recipe, not only the one you are editing.
 - Write tasks as direct instructions ("Write X"). Skip capitalized
   emphasis. Ask for a short summary instead of written-out reasoning
   [A1] [A2].
+- Make every recipe act without questions. The goal says that running
+  the prompt approves it, for a new or an existing project. Hard rules
+  settle open points in a fixed order (prompt, rule reasons, project
+  evidence, tool default, easiest to undo), keep existing behavior by
+  reshaping it, and keep changes recoverable instead of asking first.
+  Deliverables end with a Decisions table [A1] [A2].
 - Include only what the requirements state. List extras you considered in
   the closing note and let the user decide [A2].
 - Call a recipe compliant only after the prompt-rule checks under Commands

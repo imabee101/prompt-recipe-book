@@ -154,6 +154,11 @@ live in each log's "Known gaps").
   cargo zigbuild for aarch64 linked with zig's LLD 22.1.8 and ran, both
   without linker settings and with the clang settings present.
 
+- [L3] T1, local command output, 2026-10-19, git 2.43.0 in a fresh
+  clone of this repository: git symbolic-ref refs/remotes/origin/HEAD
+  failed with "not a symbolic ref"; git ls-remote --symref origin HEAD
+  printed "ref: refs/heads/main".
+
 ## Commit conventions and shell tools
 
 - [S1] T1. Conventional Commits 1.0.0 (prefix grammar; fix = PATCH,
