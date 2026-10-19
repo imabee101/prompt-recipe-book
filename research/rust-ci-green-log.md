@@ -23,6 +23,10 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
    the agent no reason to stop and ask how to merge.
 7. Fixes land one at a time, so a fix's pull request can still show
    failures that later fixes cover; the merge rule must let it land.
+8. Guarantee that the whole codebase would pass every check from scratch,
+   without assuming failures exist and without naming one project's
+   details. A green last run is not proof: pull request runs check only
+   affected crates, and some runs skip tests.
 
 ## Findings
 
@@ -48,6 +52,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | gh pr merge --auto works on every repository | Not assumed: the user reports a repository with allow_auto_merge false where branch protection and rulesets return 403 on its plan, so --auto can be refused and required checks may not be enforced | none (user report) | n/a | Hard rule 10 names no merge mechanism: merge once every check passes, by any path the repository allows (auto-merge, merge queue, or direct) |
 | gh pr checks --watch waits until checks finish; --required fails when no checks are required | Confirmed | [H4] | T1 | none; kept as background for why the rule names no command |
 | A fix's pull request is green only when every check passes | Corrected by requirement: until the last fix, other components still fail | none (requirement) | n/a | Hard rule 10 and verification 4 judge a merge by the fixed component passing and no new failure against main; not_included excludes a merge that adds a failure |
+| A green latest run shows the codebase passes | Corrected: a run proves only the checks it ran; the CI recipe scopes pull request runs to affected crates and runs no tests on push | none (requirement; CI recipe jobs) | n/a | Task runs every check on every crate and target as if every file had changed; Done when requires a pass from a clean state; hard rule 3 drops "locally" so a CI-only failure can still be reproduced in CI |
 
 ## Known gaps
 

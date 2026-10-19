@@ -20,13 +20,13 @@ a time.
 
 <task>
 Bring every job in .github/workflows/ci.yml to a genuine pass. Read
-ci.yml, read the failed runs on main with
-gh run list --workflow ci.yml --branch main and
-gh run view <run-id> --log-failed, and run the same commands
-locally. List every failing job, crate, and target. Fix them one
-component at a time, each on its own branch and pull request, and
-merge each one before starting the next. Then produce the
-deliverables listed at the end.
+ci.yml, run every check it defines on every crate and target it
+covers, as if every file had changed, and read its recent runs with
+gh run list --workflow ci.yml and gh run view <run-id> --log-failed.
+A green run proves only what it ran. List every failing job, crate,
+and target. Fix them one component at a time, each on its own branch
+and pull request, and merge each one before starting the next. Then
+produce the deliverables listed at the end.
 </task>
 
 <goal>
@@ -53,9 +53,9 @@ the first one.
    written to catch.
 2. Keep every existing test, assertion, lint, and gate. Reason:
    removing one turns red into green without fixing anything.
-3. Reproduce each failure locally and find its root cause before
-   changing code. Reason: a fix aimed at a symptom fails again on
-   the next run.
+3. Reproduce each failure and find its root cause before changing
+   code. Reason: a fix aimed at a symptom fails again on the next
+   run.
 4. Treat a test that both passes and fails on the same code as a
    bug: remove the source of nondeterminism, then confirm with
    cargo nextest run --stress-count 20 on that test. Reason:
@@ -125,7 +125,8 @@ needs.
 </not_included>
 
 <deliverables>
-Done when every job in ci.yml passes on main and every fix is merged.
+Done when every check in ci.yml passes on every crate and target it
+covers, run from a clean state, and every fix is merged.
 Keep working until then.
 1. One merged pull request per component. Its description states
    the failure, the root cause, the fix, and the verification
