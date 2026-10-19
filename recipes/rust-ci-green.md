@@ -79,12 +79,11 @@ the first one.
 9. Change workspace-hack/Cargo.toml only through cargo hakari
    commands. Reason: cargo hakari generates that file, and the
    gates job fails on any drift from its output.
-10. Merge each pull request with gh pr merge --auto and a merge
-    method the repository allows, and wait until
-    gh pr view <pr> --json state shows MERGED before the next
-    branch. Reason: --auto merges only after required checks pass,
-    and through the merge queue when main uses one, so every merge
-    is tested.
+10. Wait for ci.yml on each pull request with
+    gh pr checks <pr> --watch, and merge it with gh pr merge and a
+    merge method the repository allows once every check passes.
+    Reason: the passing run is the gate, whatever the repository's
+    merge settings.
 11. Take every crate name, path, version, and command from the
     workspace, cargo metadata, and ci.yml. Reason: an invented name
     fails on its first run.
@@ -119,7 +118,7 @@ check fails, fix the code and keep the check as written.
 tests and assertions, nextest retries, raised timeouts, #[allow]
 attributes that silence a lint instead of fixing it, cfg attributes
 that remove code from a target, disabled jobs or matrix legs,
-merges with --admin or any other bypass of required checks, new
+merging a pull request before its checks pass, new
 documentation files, and features or refactors beyond what a fix
 needs.
 </not_included>

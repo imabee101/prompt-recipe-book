@@ -188,6 +188,10 @@ live in each log's "Known gaps").
 - [H3] T1, project source, fetched 2026-10-19. gh pr view --json exposes
   the state field.
   https://github.com/cli/cli/blob/trunk/pkg/cmd/pr/view/view.go
+- [H4] T1, project source, fetched 2026-10-19. gh pr checks --watch
+  watches checks until they finish; --required errors when the branch
+  reports no required checks.
+  https://github.com/cli/cli/blob/trunk/pkg/cmd/pr/checks/checks.go
 
 ## Commit conventions and shell tools
 
