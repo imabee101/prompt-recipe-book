@@ -90,10 +90,9 @@ the first one.
     committing in the real repo. Running the cargo hakari setup
     commands in <hakari_setup> is allowed. Reason: these actions
     are hard to reverse or visible to others.
-14. Never invent crate names, paths, triples, or versions. Reason:
-    an invented name makes the script fail on its first run. If you
-    cannot find one, mark that spot with a comment starting
-    UNRESOLVED: that names the value, and finish the rest.
+14. Take every crate name, path, triple, and version from the
+    workspace and cargo metadata. Reason: an invented name makes
+    the script fail on its first run.
 </hard_rules>
 
 <config>
@@ -151,9 +150,8 @@ TARGETS: {"triple":"x86_64-unknown-linux-gnu","method":"cargo"}
 </hakari>
 
 <hakari_setup>
-One-time setup, only when workspace-hack does not exist. If you
-have a shell in the repo, run these steps. Otherwise list them for
-the user.
+One-time setup, only when workspace-hack does not exist. Run these
+steps in the repo.
 1. cargo hakari init workspace-hack
 2. In .config/hakari.toml set platforms to the triples in TARGETS
    plus the host triple. Keep the generated defaults for every
@@ -310,7 +308,6 @@ the user.
 </output_format>
 
 <verification>
-If you have a shell:
 1. Run shellcheck on scripts/check and fix every warning.
 2. In a scratch workspace in a temporary directory, never in the
    real repo, with three crates (a, b depends on a, c depends on
@@ -333,8 +330,7 @@ If you have a shell:
 3. Run scripts/check gate in the real repo and include its result.
 4. Delete the scratch workspace.
 5. Include the actual output of each check in the deliverables.
-If you have no shell, state that the script is untested. Never
-claim a check passes without having run it. When a check fails,
+Never claim a check passes without having run it. When a check fails,
 fix the script, never the check, and make the script work for
 every workspace that matches <config>, not only the scratch one.
 </verification>
@@ -350,8 +346,7 @@ Done when all of these are produced and the verification output is
 included. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
-1. scripts/check, complete and commented, with no placeholders
-   other than UNRESOLVED: comments from hard rule 14.
+1. scripts/check, complete and commented, with no placeholders.
 2. .cargo/config.toml, .config/nextest.toml, and
    .config/hakari.toml.
 3. The one-time hakari setup commands, marked as already run or

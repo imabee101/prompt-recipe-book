@@ -5,7 +5,7 @@ target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
 last_verified: 2026-10-19
-requires: shell with actionlint (optional)
+requires: shell with actionlint
 pairs_with: rust-local-check-script
 ---
 
@@ -26,9 +26,8 @@ cargo-hakari (a workspace-hack crate). Fill <config> from the
 workspace itself: read every Cargo.toml and the output of
 cargo metadata --locked. Look up each action's latest release and
 its commit SHA in the action's own repository. Then produce the
-deliverables listed at the end. If you have a shell, validate the
-YAML with actionlint and follow <verification>. Otherwise, review
-the file against the rules below.
+deliverables listed at the end. Validate the YAML with actionlint
+and follow <verification>.
 </task>
 
 <goal>
@@ -86,19 +85,13 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. If any rule conflicts with real GitHub behavior, leave the rule
-    as written, mark that spot with a comment starting CONFLICT:
-    that names it, and finish everything the conflict does not
-    touch. Reason: a silent
-    workaround hides a broken rule from the user.
-13. Ask before deleting files, rewriting git history, pushing,
+12. Ask before deleting files, rewriting git history, pushing,
     creating tags, or publishing. Reason: these actions are hard
     to reverse or visible to others.
-14. Never invent crate names, paths, runner labels, versions, or
-    action SHAs. Reason: an invented SHA or crate name breaks the
-    workflow on its first run. If you cannot look one up, mark that
-    spot with a comment starting UNRESOLVED: that names the value,
-    and finish the rest.
+13. Take every crate name, path, runner label, and version from the
+    workspace and cargo metadata, and every action SHA from the
+    action's own repository. Reason: an invented SHA or crate name
+    breaks the workflow on its first run.
 </hard_rules>
 
 <config>
@@ -354,7 +347,6 @@ Create these jobs in order.
 </build_cost>
 
 <verification>
-If you have a shell:
 1. Run actionlint on ci.yml and fix every finding.
 2. Confirm by search: no schedule or workflow_dispatch trigger,
    every job has timeout-minutes, every third-party action is
@@ -364,8 +356,7 @@ If you have a shell:
    shared-key.
 4. Delete any temporary files you created for these checks.
 5. Include the actual output of each check in the deliverables.
-If you have no shell, state that the file is unvalidated. Never
-claim a check passes without having run it. When a check fails,
+Never claim a check passes without having run it. When a check fails,
 fix ci.yml, never the check.
 </verification>
 
@@ -380,9 +371,7 @@ Done when all of these are produced and the verification output is
 included. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
-1. The complete ci.yml with brief comments and no placeholders
-   other than CONFLICT: and UNRESOLVED: comments from hard rules
-   12 and 14.
+1. The complete ci.yml with brief comments and no placeholders.
 2. Any shared config file from <shared_config_files> that did not
    already exist.
 3. A table: job | trigger event | components and targets covered |

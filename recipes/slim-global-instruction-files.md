@@ -144,8 +144,7 @@ the request. If the probe shows no difference, cut it.
 4. Run the rule 8 probes and print their output.
 5. Confirm each tool still loads its file: /context for Claude, and
    the loaded-files prompt for Codex and Grok.
-Include the actual output of each check. If you cannot run a check,
-say so.
+Include the actual output of each check.
 </verification>
 
 <not_included>

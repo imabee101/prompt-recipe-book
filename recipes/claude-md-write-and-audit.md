@@ -5,7 +5,7 @@ target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
 last_verified: 2026-10-19
-requires: shell and web fetch (both optional; the prompt carries a dated spec)
+requires: Claude Code with shell and web fetch
 pairs_with: none
 ---
 
@@ -78,9 +78,9 @@ create, not only the first one.
 </hard_rules>
 
 <spec>
-Facts from Anthropic's documentation, checked 2026-10-18. When you
-have a web fetch tool, re-fetch the three pages listed under
-<sources> first and prefer them over this list.
+Facts from Anthropic's documentation, checked 2026-10-18. Re-fetch
+the three pages listed under <sources> first and prefer them over
+this list.
 - Locations, broad to specific: managed policy file; user file
   ~/.claude/CLAUDE.md; project file ./CLAUDE.md or
   ./.claude/CLAUDE.md; local file ./CLAUDE.local.md (add it to
@@ -194,7 +194,7 @@ derive | CLAUDE.md
 </examples>
 
 <steps>
-1. Fetch the pages under <sources> when a web fetch tool exists.
+1. Fetch the pages under <sources>.
 2. Read the repository: README, package manifests, CI config,
    Makefile or justfile, scripts, an existing CLAUDE.md, AGENTS.md,
    .cursor rules, .github/copilot-instructions.md, the contents of
@@ -239,7 +239,6 @@ Put these rules in the HTML comment at the end of CLAUDE.md.
 </maintenance>
 
 <verification>
-If you have a shell:
 1. Run wc -l CLAUDE.md. Expected: 200 or fewer.
 2. Run each command the file names (or its --help or dry-run
    form) and ls each path. Record exit status. Cut or fix every
@@ -248,12 +247,11 @@ If you have a shell:
    Judge each hit against hard rule 4. Rewrite or cut each line
    that is not concrete enough to verify.
 4. List the rules by topic and confirm no two conflict.
-5. If Claude Code is available, run /context and confirm
+5. Run /context and confirm
    CLAUDE.md appears under Memory files, run /doctor, and ask a
    fresh session one question that only CLAUDE.md can answer.
-Include the actual output of each check. If you cannot run a
-check, say which one and why. Never claim a check passed without
-running it. When a check fails, fix CLAUDE.md, never the check.
+Include the actual output of each check. Never claim a check
+passed without running it. When a check fails, fix CLAUDE.md, never the check.
 </verification>
 
 <not_included>

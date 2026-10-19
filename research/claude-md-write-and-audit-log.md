@@ -53,6 +53,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Sonnet 5.5 can stop to check in before work is done; a keep-working instruction helps but does not replace rules on risky actions | Confirmed | [A2] | T1 | Deliverables drop the ask clause and "stop and report"; they keep "Done when" and "Keep working until then"; the ask-before rule is unchanged |
 | Claude can be told to act by default and infer the most useful action when intent is unclear | Confirmed | [A1] | T1 | No wording about decisions added; stop-and-report wording removed; the prompt says only when work is done and to keep working until then |
 | A one-sentence role focuses behavior and tone | Confirmed | [A1] | T1 | Role conveys seniority through experience (principal or staff, years of work at scale), with no grant of authority |
+| A prompt needs a fallback for missing values, missing tools, or checks that cannot run | Not required by any source; each fallback gave the model an exit before the work was done | none (requirement) | n/a | Fallback clauses removed: no UNRESOLVED or CONFLICT markers, no "if you have no shell", no "if you cannot run a check"; the requires line now lists the tools as needed |
 
 ## Known gaps
 
