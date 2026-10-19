@@ -349,8 +349,8 @@ Produce them in this order:
 1. scripts/check, complete and commented, with no placeholders.
 2. .cargo/config.toml, .config/nextest.toml, and
    .config/hakari.toml.
-3. The one-time hakari setup commands, marked as already run or
-   still to run.
+3. The one-time hakari setup commands with their output, or a note
+   that workspace-hack already existed.
 4. A table: mode | stages in order | scope | what it catches.
 5. A table: mode | what a green result verifies | what it does
    not verify.
