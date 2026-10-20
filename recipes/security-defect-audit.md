@@ -5,7 +5,7 @@ target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
 last_verified: 2026-10-20
-requires: shell with git and network access, osv-scanner, and the project ecosystem's own audit tool
+requires: shell with git and network access, osv-scanner, gitleaks 8.19 or newer, and the project ecosystem's own audit tool
 pairs_with: none
 ---
 
@@ -47,10 +47,11 @@ Apply every rule to every entry point, module, dependency, and
 finding, not only the first one.
 1. Leave the repository and its worktrees exactly as found. Write
    the report and every scratch file under ~/audits/<repository
-   name>/, and run tools from there, passing the project path or
-   lockfile path. Reason: the audit must leave the code under audit
-   unchanged, and some audit tools generate a lockfile when they run
-   inside a project.
+   name>/, run builds and tests in a copy of the working tree there,
+   and run scanners from there, passing the project path or lockfile
+   path. Reason: builds and tests write ignored files that git status
+   cannot see, and some audit tools generate a lockfile when they
+   run inside a project.
 2. Ground every finding in code you opened: give file:line, or the
    dependency, its locked version, and the advisory ID, plus the
    path from an entry point to the defect. Reason: a finding without
@@ -63,8 +64,12 @@ finding, not only the first one.
    result. Reason: the same advisory is critical in one project and
    inert in another.
 5. Take advisory data from tools run today: osv-scanner scan source
-   -r on the project, plus the ecosystem's own audit tool. Reason:
-   advisories are published daily, and memory is out of date.
+   -r on the project, plus the ecosystem's own audit tool. Scan for
+   secrets with gitleaks git --redact --log-opts="--all" on the
+   repository and gitleaks dir --redact on the working tree, each
+   with --report-path under ~/audits/<repository name>/. Reason:
+   advisories are published daily, memory is out of date, and a
+   secret stays exposed in history after it leaves the code.
 6. For each rule the project states it enforces, in docs, comments,
    config, names, or tests, find every path where it applies and
    confirm it holds on each, including error and alternate paths.
@@ -77,10 +82,14 @@ finding, not only the first one.
 8. Take every name, path, version, and command from the repository
    and tool output. Reason: an invented detail makes the report
    wrong in a way readers cannot see.
-9. After the first pass, take each entry point and module it found
-   clean, make the strongest case that it is not, and record what
-   that second pass found. Reason: the first pass is biased toward
-   what it expected to find.
+9. Mark every tool or check that could not run as NOT RUN in
+   Coverage, with the reason, and count what it covers as
+   unaudited. Reason: a gap that reads as a pass is the most
+   dangerous line in an audit.
+10. After the first pass, take each entry point and module it found
+    clean, make the strongest case that it is not, and record what
+    that second pass found. Reason: the first pass is biased toward
+    what it expected to find.
 </hard_rules>
 
 <scope>
@@ -99,16 +108,19 @@ finding, not only the first one.
 <output_format>
 The report, in this order:
 1. Summary: counts by severity and the three findings to fix first.
-2. Findings, ordered by severity (critical, high, medium, low):
-   ID | title | severity | category | location | evidence path |
-   impact | fix.
+2. Findings, ordered by severity: ID | title | severity | category |
+   location | evidence path | impact | fix. Critical: reachable
+   without special access and leads to compromise, data loss, or
+   outage. High: same impact behind a precondition an attacker can
+   meet. Medium: limited impact or unlikely conditions. Low:
+   hardening with no direct exploit path.
 3. Dependency advisories: package | locked version | advisory ID |
    reached (yes or no, with the reason) | fixed version.
 4. Enforcement: stated rule | paths checked | holds or fails.
 5. Limits: resource | where it grows | bound | enforced or missing.
 6. Coverage: every directory read, every tool run with its version
-   and command, the commit audited, and what the second pass of hard
-   rule 9 found.
+   and command, the commit audited, every NOT RUN item, and what the
+   second pass of hard rule 10 found.
 
 <examples>
 <example>
@@ -166,6 +178,7 @@ until then.
 Paste into a Claude session opened in the project to audit.
 The session needs network access for advisory data, plus osv-scanner and the ecosystem's audit tool.
 The report lands under ~/audits/, outside the repository and its worktrees.
+This is the security instance of a five-domain audit set (security, performance, deployment, production shape, operations); alone it leaves the other four unaudited.
 
 ## Provenance
 

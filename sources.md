@@ -245,3 +245,9 @@ live in each log's "Known gaps").
 - [V3] T1, project README, fetched 2026-10-20. govulncheck reports only
   vulnerabilities in functions the code actually calls.
   https://github.com/golang/vuln/blob/master/README.md
+- [V4] T1, project README, fetched 2026-10-20. gitleaks git scans git
+  history (log-opts passes options to git log -p, such as --all);
+  gitleaks dir scans files; --redact hides secrets in output;
+  --report-path writes the report file. v8.19.0 deprecated detect and
+  protect in favor of git and dir.
+  https://github.com/gitleaks/gitleaks/blob/master/README.md

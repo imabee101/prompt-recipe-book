@@ -18,6 +18,10 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
    any project, and not a word-for-word copy of the request.
 6. Carry over the nuance of the other recipes, not only the skill's
    structure.
+7. Review fixes: run builds and tests on a copy of the tree, since
+   gitignored output escapes git status; report any check that could
+   not run as NOT RUN; name a secrets tool for git history; note that
+   this is the security instance of a five-domain set; anchor severity.
 
 ## Findings
 
@@ -38,6 +42,10 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Repo convention: a first pass is biased, so run an adversarial second pass | Applied from slim-global-instruction-files rule 6 | none (repo convention) | n/a | Hard rule 9; Coverage records the second pass |
 | Repo convention: a green result proves only what it ran | Applied from rust-ci-green | none (repo convention) | n/a | Task: a passing test suite proves only what it tests |
 | Repo convention: when a check fails, fix the work and keep the check | Applied from rust-ci-github-actions and rust-local-check-script | none (repo convention) | n/a | verification closing line |
+| git status --porcelain proves the tree is untouched | Corrected: builds and tests write gitignored files that it does not list | none (review finding) | n/a | Hard rule 1 runs builds and tests in a copy of the working tree under ~/audits/ |
+| gitleaks scans history with gitleaks git and files with gitleaks dir; --redact hides secret values; --report-path sets the output file | Confirmed | [V4] | T1 | Hard rule 5 names both commands with --redact and --report-path outside the repository; requires names gitleaks 8.19 or newer |
+| A check that could not run needs an explicit status | Review finding: without it a gap can read as a pass | none (review finding) | n/a | Hard rule 9 marks NOT RUN and counts its scope as unaudited; Coverage lists NOT RUN items |
+| Severity needs anchors so two auditors grade alike | Review finding | none (review finding) | n/a | output_format defines critical, high, medium, and low |
 
 ## Known gaps
 
