@@ -12,6 +12,8 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 3. Follow the conventions and nuance of the other recipes, not only the
    skill: no wording that invites questions or stopping, minimal,
    transferable to any project.
+4. Some items are better done in a particular order, and dependencies
+   between items can set that order.
 
 ## Findings
 
@@ -29,6 +31,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Repo convention: merge by any path the repository allows once the fix is proven and nothing regresses | Applied from rust-ci-green hard rule 10 | none (repo convention) | n/a | Hard rule 9 |
 | Repo convention: one change per branch and pull request, smallest change that keeps what the product does | Applied from rust-ci-green and the CI recipes | none (repo convention) | n/a | Hard rule 8 and goal |
 | Repo convention: a NOT RUN item marks an unaudited area | Applied from security-defect-audit hard rule 9 | none (repo convention) | n/a | Hard rule 6 runs each NOT RUN item and resolves what it finds |
+| Repo convention: dependency order goes before severity, so a fix lands on the change beneath it | Applied from rust-ci-green hard rule 5 (crates in dependency order) | none (repo convention; requirement 4) | n/a | Hard rule 1 orders by dependency between items, then severity |
 
 ## Known gaps
 

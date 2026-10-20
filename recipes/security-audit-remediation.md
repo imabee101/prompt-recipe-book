@@ -43,8 +43,11 @@ project.
 <hard_rules>
 Apply every rule to every item in the report, not only the first
 one.
-1. Work in severity order, critical first. Reason: the worst risk
-   closes soonest.
+1. Order the work so each fix lands on the one it depends on: an
+   item that other items build on, or that changes code or
+   dependencies they touch, goes first; severity, critical first,
+   orders the rest. Reason: a fix made before the one beneath it is
+   done twice, and the worst risk still closes soonest.
 2. Before fixing an item, confirm it against the current code by
    its location and evidence path. Close an item the code already
    disproves with a test or scan that would fail if it were real.
