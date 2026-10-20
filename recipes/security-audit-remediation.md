@@ -47,7 +47,7 @@ one.
    closes soonest.
 2. Before fixing an item, confirm it against the current code by
    its location and evidence path. Close an item the code already
-   disproves with a test that would fail if the finding were real.
+   disproves with a test or scan that would fail if it were real.
    Reason: the code may have moved since the audit, and a claim of
    safety needs the same proof as a fix.
 3. Fix the root cause on every path the finding names, including
@@ -104,9 +104,9 @@ check fails, fix the code and keep the check as written.
 </verification>
 
 <not_included>
-Edits to the audit report, items not in the report, git history
-rewrites, credential rotation in external systems, removed or
-weakened tests, merging a pull request that adds a failure, new
+Edits to the audit report, problems unrelated to its items, git
+history rewrites, credential rotation in external systems, removed
+or weakened tests, merging a pull request that adds a failure, new
 documentation files, and features or refactors beyond what a fix
 needs.
 </not_included>
