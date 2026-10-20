@@ -119,8 +119,8 @@ signed-in user can delete accounts | call require_admin() on the
 bulk route and add a test for both routes.
 </example>
 <example>
-GHSA-xxxx-xxxx-xxxx | parser 1.2.3 | reached: yes, config.rs:22
-parses untrusted YAML with the affected function | fixed in 1.2.4.
+parser | 1.2.3 | GHSA-xxxx-xxxx-xxxx | yes: config.rs:22 parses
+untrusted YAML with the affected function | 1.2.4
 </example>
 </examples>
 The examples are illustrative; take real values from the project.
@@ -139,9 +139,9 @@ Count a check as passed only after running it.
 </verification>
 
 <not_included>
-Changes to the project, commits, pushes, issues, pull requests,
-tests run against anything but a local build, and fixes beyond the
-fix described in each finding.
+Changes to the project, applied fixes (each finding describes its
+fix), commits, pushes, issues, pull requests, and tests run against
+anything but a local build.
 </not_included>
 
 <deliverables>
