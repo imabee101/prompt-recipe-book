@@ -229,3 +229,19 @@ live in each log's "Known gaps").
   first non-empty override precedence, instruction chain, loaded-sources
   diagnostic). Relevant sections checked 2026-10-18.
   https://developers.openai.com/codex/guides/agents-md
+
+## Security audit tooling
+
+- [V1] T1, project docs source, fetched 2026-10-20 from GitHub raw.
+  osv-scanner scan source -r <dir> finds lockfiles, SBOMs, and git
+  directories recursively and checks the dependencies against the OSV
+  database; scan source is the default subcommand.
+  https://github.com/google/osv-scanner/blob/main/docs/scan-source.md
+- [V2] T1, project README, fetched 2026-10-20. cargo audit checks
+  Cargo.lock against the RustSec database; when Cargo.lock is missing it
+  runs cargo update to generate one, so pass --file and run it from
+  outside the project to leave the project untouched.
+  https://github.com/rustsec/rustsec/blob/main/cargo-audit/README.md
+- [V3] T1, project README, fetched 2026-10-20. govulncheck reports only
+  vulnerabilities in functions the code actually calls.
+  https://github.com/golang/vuln/blob/master/README.md
