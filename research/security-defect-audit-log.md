@@ -16,6 +16,8 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 5. Follow the conventions and guidance of the other recipes: no wording
    that invites questions or stopping, direct, minimal, transferable to
    any project, and not a word-for-word copy of the request.
+6. Carry over the nuance of the other recipes, not only the skill's
+   structure.
 
 ## Findings
 
@@ -32,6 +34,10 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Explaining the reason for each rule helps Claude apply it to unnamed cases | Confirmed | [A1] | T1 | Every hard rule carries its reason |
 | Examples steer output format; use 3 to 5 when format is the main risk | Confirmed | [A1] | T1 | Three examples in output_format |
 | Models report work as done without running a check | Confirmed | [A2] | T1 | verification requires the actual output of each check |
+| Repo convention: a default stance in the role sets the bias of the whole run | Applied from slim-global-instruction-files (every line unnecessary until proven) | none (repo convention) | n/a | Role treats every input as hostile until the code proves otherwise |
+| Repo convention: a first pass is biased, so run an adversarial second pass | Applied from slim-global-instruction-files rule 6 | none (repo convention) | n/a | Hard rule 9; Coverage records the second pass |
+| Repo convention: a green result proves only what it ran | Applied from rust-ci-green | none (repo convention) | n/a | Task: a passing test suite proves only what it tests |
+| Repo convention: when a check fails, fix the work and keep the check | Applied from rust-ci-github-actions and rust-local-check-script | none (repo convention) | n/a | verification closing line |
 
 ## Known gaps
 
