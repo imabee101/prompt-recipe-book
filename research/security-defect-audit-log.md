@@ -46,6 +46,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | gitleaks scans history with gitleaks git and files with gitleaks dir; --redact hides secret values; --report-path sets the output file | Confirmed | [V4] | T1 | Hard rule 5 names both commands with --redact and --report-path outside the repository; requires names gitleaks 8.19 or newer |
 | A check that could not run needs an explicit status | Review finding: without it a gap can read as a pass | none (review finding) | n/a | Hard rule 9 marks NOT RUN and counts its scope as unaudited; Coverage lists NOT RUN items |
 | Severity needs anchors so two auditors grade alike | Review finding | none (review finding) | n/a | output_format defines critical, high, medium, and low |
+| Audit against the other recipes | Six fixes: Done when allows NOT RUN items; tools are installed before NOT RUN applies; licenses judged against the project's own; gitleaks findings cross-checked; production grade points at scope; one example in another language | none (repo conventions) | n/a | Task, hard rule 5, scope, examples, verification 3, deliverables |
 
 ## Known gaps
 

@@ -22,7 +22,7 @@ up because each one is traced to the line that causes it.
 <task>
 Audit the project in the current working directory for security
 vulnerabilities and defects that keep it from being production
-grade. Map every entry point first, then read every module, run the
+grade, as listed in <scope>. Map every entry point first, then read every module, run the
 project's own tests and checks, and check every dependency against
 advisory data current today. A passing test suite proves only what
 it tests. Write the findings to
@@ -64,7 +64,8 @@ finding, not only the first one.
    result. Reason: the same advisory is critical in one project and
    inert in another.
 5. Take advisory data from tools run today: osv-scanner scan source
-   -r on the project, plus the ecosystem's own audit tool. Scan for
+   -r on the project, plus the ecosystem's own audit tool, each
+   installed outside the repository. Scan for
    secrets with gitleaks git --redact --log-opts="--all" on the
    repository and gitleaks dir --redact on the working tree, each
    with --report-path under ~/audits/<repository name>/. Reason:
@@ -97,7 +98,8 @@ finding, not only the first one.
   secrets in files and git history, cryptography, deserialization,
   path handling, request forgery, concurrency, and memory safety.
 - Dependencies: known advisories, unmaintained or yanked packages,
-  unpinned versions, and licenses.
+  unpinned versions, and licenses that conflict with the project's
+  own.
 - Enforcement and limits: hard rules 6 and 7.
 - Production grade: error handling, panics and crashes on bad
   input, configuration and secret handling, logging that leaks data,
@@ -138,7 +140,7 @@ signed-in user can delete accounts | call require_admin() on the
 bulk route and add a test for both routes.
 </example>
 <example>
-parser | 1.2.3 | GHSA-xxxx-xxxx-xxxx | yes: config.rs:22 parses
+yaml | 1.2.3 | GHSA-xxxx-xxxx-xxxx | yes: src/config.ts:22 parses
 untrusted YAML with the affected function | 1.2.4
 </example>
 </examples>
@@ -150,8 +152,8 @@ The examples are illustrative; take real values from the project.
    and after it, and confirm the two outputs are identical.
 2. Confirm the report path is outside every path git worktree list
    prints.
-3. Confirm every advisory ID in the tool output appears in the
-   report's dependency table.
+3. Confirm every advisory ID and every gitleaks finding in the tool
+   output appears in the report.
 4. Confirm every finding has a location and an evidence path.
 Include the actual output of each check in the Coverage section.
 Count a check as passed only after running it. When a check fails,
@@ -166,7 +168,8 @@ anything but a local build.
 
 <deliverables>
 Done when the report covers every item in <scope> for the whole
-codebase and the verification output is included. Keep working
+codebase, each audited or marked NOT RUN, and the verification
+output is included. Keep working
 until then.
 1. The report at ~/audits/<repository name>/<YYYY-MM-DD>-audit.md.
 2. Its path, and the summary section, as the final message.
