@@ -33,11 +33,10 @@ same codebase finds none of them. Reason: an audit only pays off
 when its findings are closed, and a fix that is not proven is a
 finding that comes back.
 
-Carry the work through to the finished deliverables. Close each gap
-with the smallest change that keeps what the product does, and
-create only the files a fix needs. Where this prompt leaves room,
-choose the option that meets it with the least disruption to the
-project.
+Carry the work through to the finished deliverables. Choose the fix
+that best solves each item. Among equally good fixes, take the one
+that disturbs the project least and keeps what the product does.
+Create only the files a fix needs.
 </goal>
 
 <hard_rules>

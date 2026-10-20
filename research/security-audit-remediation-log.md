@@ -15,6 +15,8 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 4. Some items are better done in a particular order, and dependencies
    between items can set that order. Weigh severity and dependency
    equally, in simple, direct wording.
+5. Prefer the less disruptive path, but quality comes first; the
+   instruction must be simple and easy to follow.
 
 ## Findings
 
@@ -33,6 +35,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Repo convention: one change per branch and pull request, smallest change that keeps what the product does | Applied from rust-ci-green and the CI recipes | none (repo convention) | n/a | Hard rule 8 and goal |
 | Repo convention: a NOT RUN item marks an unaudited area | Applied from security-defect-audit hard rule 9 | none (repo convention) | n/a | Hard rule 6 runs each NOT RUN item and resolves what it finds |
 | Repo convention: dependency order goes before severity, so a fix lands on the change beneath it | Applied from rust-ci-green hard rule 5 (crates in dependency order) | none (repo convention; requirement 4) | n/a | Hard rule 1 weighs severity and dependency equally (user requirement) |
+| Quality and disruption pull in different directions | Requirement: quality decides first, disruption breaks ties | none (requirement 5) | n/a | Goal: choose the fix that best solves each item; among equally good fixes, take the least disruptive one that keeps what the product does |
 
 ## Known gaps
 
