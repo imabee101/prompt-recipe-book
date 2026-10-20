@@ -36,6 +36,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | Repo convention: a NOT RUN item marks an unaudited area | Applied from security-defect-audit hard rule 9 | none (repo convention) | n/a | Hard rule 6 runs each NOT RUN item and resolves what it finds |
 | Repo convention: dependency order goes before severity, so a fix lands on the change beneath it | Applied from rust-ci-green hard rule 5 (crates in dependency order) | none (repo convention; requirement 4) | n/a | Hard rule 1 weighs severity and dependency equally (user requirement) |
 | Quality and disruption pull in different directions | Requirement: quality decides first, disruption breaks ties | none (requirement 5) | n/a | Goal sets a fixed quality bar (root cause removed on every path, proven by a test, as in hard rule 3); least change chooses only among fixes that meet it. "Equally good" was replaced because it is a judgment a smaller patch can claim |
+| The prompt trusts the audit report | Checked: hard rule 2 confirms each item against current code and closes wrong ones with a test or scan; the goal's quality bar applies whatever fix the report suggests. Rule 3 limited fixes to paths the finding names, which conflicted with the goal | none (review) | n/a | Hard rule 3 now covers every path the finding reaches |
 
 ## Known gaps
 

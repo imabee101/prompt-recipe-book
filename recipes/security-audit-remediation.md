@@ -50,7 +50,7 @@ one.
    disproves with a test or scan that would fail if it were real.
    Reason: the code may have moved since the audit, and a claim of
    safety needs the same proof as a fix.
-3. Fix the root cause on every path the finding names, including
+3. Fix the root cause on every path the finding reaches, including
    error and alternate paths, and add a test that fails before the
    fix and passes after it. Reason: a fix on one path leaves the
    finding open on the others, and the test keeps it closed.
