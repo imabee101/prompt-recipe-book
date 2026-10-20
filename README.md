@@ -13,6 +13,7 @@ session that has the tools the recipe lists under `requires`.
 | [rust-ci-green](recipes/rust-ci-green.md) | Follow-up to the CI recipe: every failing job fixed on genuine tests, one merged pull request per component | verified |
 | [slim-global-instruction-files](recipes/slim-global-instruction-files.md) | A backed-up, behavior-tested trim of global Claude Code, Codex, and Grok instructions | draft |
 | [security-defect-audit](recipes/security-defect-audit.md) | A deep security and defect audit report, written outside the repository | verified |
+| [security-audit-remediation](recipes/security-audit-remediation.md) | Follow-up to the audit: every report item resolved, proven by a test or scan, one merged pull request each | verified |
 | [claude-md-write-and-audit](recipes/claude-md-write-and-audit.md) | A new or audited CLAUDE.md that follows Anthropic's documentation | verified |
 
 The two Rust recipes are paired: same stages, flags, regexes, and version
