@@ -90,10 +90,11 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. Leave git history, tags, and crate versions already on
-    crates.io as they are, and push nothing.
-    Reason: these actions are hard to reverse or visible to
-    others.
+12. Leave git history, existing tags, and crate versions already
+    on crates.io as they are. Merge the pipeline into main so its
+    first run cuts the first release. Reason: existing releases are
+    hard to reverse, and versioning starts only when the pipeline
+    runs on main.
 13. Never invent crate names, paths, runner labels, versions, or
     action SHAs. Reason: an invented SHA or crate name breaks the
     workflow on its first run.
@@ -276,6 +277,8 @@ Create these jobs in order.
      Do not edit Cargo.toml in the repo.
    - If a tag already exists, reuse it and continue. Re-runs must
      succeed.
+   - A component with no tag yet starts from the version in its
+     Cargo.toml, and its first run releases that version.
    - Output the release matrix: per target, the released
      components and versions.
 
@@ -387,8 +390,8 @@ Produce them in this order:
    docs-only, push to main with code), each marked skip, check
    only, test, cache warm, or release.
 5. The list of targets that are built but never tested.
-6. Two sentences on how to cut a release: merge a feat or fix
-   commit to main.
+6. The URL of the first release run on main and the tags it
+   created.
 7. One sentence confirming the one-time hakari setup
    (cargo hakari init, manage-deps, generate) is committed
    before this workflow is enabled.

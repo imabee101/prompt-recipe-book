@@ -25,6 +25,9 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
    the prompt names, keeps existing project features, fits the work to the
    project, and picks the least disruptive option within the constraints.
    Make the role read as more senior through experience.
+10. 2026-11-02: The pipeline was built but versioning never started, and
+   the session asked how to proceed. Starting the release process is
+   part of the job.
 
 ## Findings
 
@@ -69,6 +72,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | A prompt should tell the model to stop and report | Not required by any source; a stop-and-report clause gives the model a reason to end the turn before the work is finished | none (requirement) | n/a | "Then stop and report" removed from deliverables; stop-and-report fallbacks removed from the rules that had them |
 | An existing repository may not yet be shaped for this pipeline | Requirement, no source needed | none (requirement) | n/a | Goal allows the smallest change that closes the gap while keeping what the product does; the rule that froze files outside the prompt's list is narrowed to history, tags, packages, and pushes; existing shared config files are brought in line |
 | "Published packages" could be read as forbidding dependency upgrades | Clarified: the limit covers crate versions already on crates.io, not dependencies | none (requirement) | n/a | Rule 12 names crate versions already on crates.io |
+| Versioning works from the first run | Corrected by user report: with no tag the first version was undefined, and push nothing kept the pipeline off main, so no release ran | none (user report) | n/a | Version job starts an untagged component at its Cargo.toml version; hard rule 12 merges the pipeline into main; deliverable 6 is the first release run and its tags. The paired local script has no versioning, so parity is unchanged |
 
 ## Known gaps
 
