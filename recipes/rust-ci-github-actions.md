@@ -19,16 +19,16 @@ years of releases.
 </role>
 
 <task>
-Write one file, .github/workflows/ci.yml. It lints, checks, tests,
-versions, builds, and releases a Rust workspace that has multiple
-components and multiple target triples. The workspace uses
-cargo-hakari (a workspace-hack crate). Fill <config> from the
-workspace itself: read every Cargo.toml and the output of
-cargo metadata --locked. Look up each action's latest release and
-its commit SHA in the action's own repository. Then produce the
-deliverables listed at the end. If you have a shell, validate the
-YAML with actionlint and follow <verification>. Otherwise, review
-the file against the rules below.
+Write one file, .github/workflows/ci.yml, and merge it into main. It
+lints, checks, tests, versions, builds, and releases a Rust
+workspace that has multiple components and multiple target triples.
+The workspace uses cargo-hakari (a workspace-hack crate). Fill
+<config> from the workspace itself: read every Cargo.toml and the
+output of cargo metadata --locked. Look up each action's latest
+release and its commit SHA in the action's own repository. Then
+produce the deliverables listed at the end. If you have a shell,
+validate the YAML with actionlint and follow <verification>.
+Otherwise, review the file against the rules below.
 </task>
 
 <goal>
@@ -94,7 +94,9 @@ rule and its reason.
     on crates.io as they are. Merge the pipeline into main so its
     first run cuts the first release. Reason: existing releases are
     hard to reverse, and versioning starts only when the pipeline
-    runs on main.
+    runs on main. Failures the new pipeline finds in existing code
+    belong to the code, not the pipeline, and leave the merge to
+    proceed.
 13. Never invent crate names, paths, runner labels, versions, or
     action SHAs. Reason: an invented SHA or crate name breaks the
     workflow on its first run.
@@ -146,7 +148,7 @@ TARGETS: {"name":"linux","triple":"x86_64-unknown-linux-gnu",
 </config>
 
 <shared_config_files>
-Create these files, or bring existing ones in line. Both are
+Create these files, or bring existing ones in line. All three are
 shared with the local script scripts/check.
 
 .cargo/config.toml
@@ -170,6 +172,9 @@ shared with the local script scripts/check.
 - [profile.gate]: fail-fast = { max-fail = 1 },
   failure-output = "immediate-final",
   slow-timeout = { period = "60s", terminate-after = 5 }
+
+deny.toml
+- Allow the licenses the current dependency tree already uses.
 </shared_config_files>
 
 <skip_logic>
@@ -382,8 +387,8 @@ results. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders.
-2. Any shared config file from <shared_config_files> that did not
-   already exist.
+2. Each shared config file from <shared_config_files> that you
+   created or changed.
 3. A table: job | trigger event | components and targets covered |
    expected runtime | what it catches.
 4. A table of events (pull_request, merge_group, push to main with
