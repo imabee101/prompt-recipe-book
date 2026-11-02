@@ -19,16 +19,16 @@ years of releases.
 </role>
 
 <task>
-Write one file, .github/workflows/ci.yml. It lints, checks, tests,
-versions, builds, and releases a Rust workspace that has multiple
-components and multiple target triples. The workspace uses
-cargo-hakari (a workspace-hack crate). Fill <config> from the
-workspace itself: read every Cargo.toml and the output of
-cargo metadata --locked. Look up each action's latest release and
-its commit SHA in the action's own repository. Then produce the
-deliverables listed at the end. If you have a shell, validate the
-YAML with actionlint and follow <verification>. Otherwise, review
-the file against the rules below.
+Write one file, .github/workflows/ci.yml, and merge it into main. It
+lints, checks, tests, versions, builds, and releases a Rust
+workspace that has multiple components and multiple target triples.
+The workspace uses cargo-hakari (a workspace-hack crate). Fill
+<config> from the workspace itself: read every Cargo.toml and the
+output of cargo metadata --locked. Look up each action's latest
+release and its commit SHA in the action's own repository. Then
+produce the deliverables listed at the end. If you have a shell,
+validate the YAML with actionlint and follow <verification>.
+Otherwise, review the file against the rules below.
 </task>
 
 <goal>
@@ -90,10 +90,13 @@ rule and its reason.
     dependency feature set identical for -p and --workspace runs,
     so caches warmed on main by full-workspace runs are fully
     reused by affected-only runs on pull requests.
-12. Leave git history, tags, and crate versions already on
-    crates.io as they are, and push nothing.
-    Reason: these actions are hard to reverse or visible to
-    others.
+12. Leave git history, existing tags, and crate versions already
+    on crates.io as they are. Merge the pipeline into main so its
+    first run cuts the first release. Reason: existing releases are
+    hard to reverse, and versioning starts only when the pipeline
+    runs on main. Failures the new pipeline finds in existing code
+    belong to the code, not the pipeline, and leave the merge to
+    proceed.
 13. Never invent crate names, paths, runner labels, versions, or
     action SHAs. Reason: an invented SHA or crate name breaks the
     workflow on its first run.
@@ -145,7 +148,7 @@ TARGETS: {"name":"linux","triple":"x86_64-unknown-linux-gnu",
 </config>
 
 <shared_config_files>
-Create these files, or bring existing ones in line. Both are
+Create these files, or bring existing ones in line. All three are
 shared with the local script scripts/check.
 
 .cargo/config.toml
@@ -169,6 +172,9 @@ shared with the local script scripts/check.
 - [profile.gate]: fail-fast = { max-fail = 1 },
   failure-output = "immediate-final",
   slow-timeout = { period = "60s", terminate-after = 5 }
+
+deny.toml
+- Allow the licenses the current dependency tree already uses.
 </shared_config_files>
 
 <skip_logic>
@@ -276,6 +282,8 @@ Create these jobs in order.
      Do not edit Cargo.toml in the repo.
    - If a tag already exists, reuse it and continue. Re-runs must
      succeed.
+   - A component with no tag yet starts from the version in its
+     Cargo.toml, and its first run releases that version.
    - Output the release matrix: per target, the released
      components and versions.
 
@@ -379,16 +387,16 @@ results. Keep working until then.
 Mention possible improvements at the end instead of making them.
 Produce them in this order:
 1. The complete ci.yml with brief comments and no placeholders.
-2. Any shared config file from <shared_config_files> that did not
-   already exist.
+2. Each shared config file from <shared_config_files> that you
+   created or changed.
 3. A table: job | trigger event | components and targets covered |
    expected runtime | what it catches.
 4. A table of events (pull_request, merge_group, push to main with
    docs-only, push to main with code), each marked skip, check
    only, test, cache warm, or release.
 5. The list of targets that are built but never tested.
-6. Two sentences on how to cut a release: merge a feat or fix
-   commit to main.
+6. The URL of the first release run on main and the tags it
+   created.
 7. One sentence confirming the one-time hakari setup
    (cargo hakari init, manage-deps, generate) is committed
    before this workflow is enabled.
