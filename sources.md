@@ -42,6 +42,11 @@ live in each log's "Known gaps").
   https://code.claude.com/docs/en/prompt-caching.md
 - [C7] T1. Claude Code commands reference (/doctor and prompt-audit).
   https://code.claude.com/docs/en/commands.md
+- [C8] T1. Claude Code setup (fetched 2026-11-02): the native install is
+  one command, curl -fsSL https://claude.ai/install.sh | bash on macOS,
+  Linux, and WSL, and irm https://claude.ai/install.ps1 | iex in
+  PowerShell.
+  https://code.claude.com/docs/en/setup.md
 
 ## GitHub
 

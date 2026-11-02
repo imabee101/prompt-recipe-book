@@ -28,6 +28,9 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 10. 2026-11-02: The pipeline was built but versioning never started, and
    the session asked how to proceed. Starting the release process is
    part of the job.
+11. 2026-11-02: A release that ships a binary includes a one-line
+   installer like Claude Code's single curl command, not a long chain of
+   piped commands, without having to ask for it.
 
 ## Findings
 
@@ -74,6 +77,7 @@ Tiers: T1 = official or primary, T2 = secondary, T0 = from memory.
 | "Published packages" could be read as forbidding dependency upgrades | Clarified: the limit covers crate versions already on crates.io, not dependencies | none (requirement) | n/a | Rule 12 names crate versions already on crates.io |
 | Versioning works from the first run | Corrected by user report: with no tag the first version was undefined, and push nothing kept the pipeline off main, so no release ran | none (user report) | n/a | Version job starts an untagged component at its Cargo.toml version; hard rule 12 merges the pipeline into main; deliverable 6 is the first release run and its tags. The paired local script has no versioning, so parity is unchanged |
 | The session can finish the release without input | Corrected by session report: the task named only the file, failing checks in existing code held the merge, and cargo deny had no license policy | none (session report) | n/a | Task adds the merge into main; hard rule 12 lets the merge proceed past failures in existing code; deny.toml allows the licenses already in use. The local script reads the same deny.toml (it is in its change-detection list), so parity holds |
+| Claude Code installs with one command that fetches a hosted script | Confirmed: curl -fsSL https://claude.ai/install.sh \| bash | [C8] | T1 | Release job: one install script per binary component, run with one curl command; task, verification 4, not_included, and deliverable 6 cover it. The local script does no releasing, so parity is unchanged |
 
 ## Known gaps
 
