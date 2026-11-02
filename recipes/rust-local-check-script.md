@@ -34,9 +34,7 @@ never let a bad change pass unnoticed. Reason: slow or noisy
 feedback makes developers skip checks, and a green result that
 verified too little ships bugs. So the script has a scoped fast
 mode for iteration and a full gate mode for before pushing, and
-every green fast run states what it did not verify. Gate mode runs
-the same stages as the CI pipeline, so a green local gate predicts
-a green CI run.
+every green fast run states what it did not verify.
 
 Carry the work through to the finished deliverables. Where the
 repository falls short of this, close the gap with the smallest
@@ -347,7 +345,8 @@ every workspace that matches <config>, not only the scratch one.
 <not_included>
 Watch mode, coverage, miri, fuzzing, benchmarks, sccache, nightly
 features, cranelift, automatic tool installation, git hook
-installation, CI workflows, versioning, and releasing.
+installation, creating or changing any CI workflow, versioning, and
+releasing.
 </not_included>
 
 <deliverables>
