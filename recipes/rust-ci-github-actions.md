@@ -5,7 +5,7 @@ target_model: claude-sonnet-5-5
 suggested_effort: high
 status: verified
 last_verified: 2026-10-19
-requires: shell with actionlint (optional)
+requires: shell with actionlint and shellcheck
 pairs_with: rust-local-check-script
 ---
 
@@ -19,16 +19,17 @@ years of releases.
 </role>
 
 <task>
-Write one file, .github/workflows/ci.yml, and merge it into main. It
-lints, checks, tests, versions, builds, and releases a Rust
-workspace that has multiple components and multiple target triples.
-The workspace uses cargo-hakari (a workspace-hack crate). Fill
-<config> from the workspace itself: read every Cargo.toml and the
-output of cargo metadata --locked. Look up each action's latest
-release and its commit SHA in the action's own repository. Then
-produce the deliverables listed at the end. If you have a shell,
-validate the YAML with actionlint and follow <verification>.
-Otherwise, review the file against the rules below.
+Write .github/workflows/ci.yml and one install script per component
+that ships a binary, and merge them into main. The workflow lints,
+checks, tests, versions, builds, and releases a Rust workspace that
+has multiple components and multiple target triples. The workspace
+uses cargo-hakari (a workspace-hack crate). Fill <config> from the
+workspace itself: read every Cargo.toml and the output of cargo
+metadata --locked. Look up each action's latest release and its
+commit SHA in the action's own repository. Then produce the
+deliverables listed at the end. If you have a shell, validate the
+YAML with actionlint and follow <verification>. Otherwise, review
+the file against the rules below.
 </task>
 
 <goal>
@@ -310,6 +311,13 @@ Create these jobs in order.
      already on crates.io.
    - Comment in the file: tags and releases created with
      GITHUB_TOKEN do not trigger workflows, so there is no loop.
+   - Each component that ships a binary installs with one command,
+     the way Claude Code does:
+     curl -fsSL https://raw.githubusercontent.com/<owner>/<repo>/main/install/<component>.sh | bash
+     The script, committed on main, finds the newest
+     <component>-vX.Y.Z release, downloads the archive for the
+     user's OS and architecture, checks its SHA256, and installs the
+     binary to ~/.local/bin.
 
 10. ci-ok (needs: all jobs above; if: always())
     - The only required status check for branch protection and the
@@ -368,8 +376,12 @@ If you have a shell:
    --locked.
 3. Confirm that no two matrix legs can write the same rust-cache
    shared-key.
-4. Delete any temporary files you created for these checks.
-5. Report the actual output of each check.
+4. Run shellcheck on every install script and fix every finding.
+   After the first release, run each install command with HOME set
+   to a temporary directory and run the installed binary with
+   --version.
+5. Delete any temporary files you created for these checks.
+6. Report the actual output of each check.
 If you have no shell, state that the file is unvalidated. Never
 claim a check passes without having run it. When a check fails,
 fix ci.yml, never the check.
@@ -378,7 +390,8 @@ fix ci.yml, never the check.
 <not_included>
 Include only the jobs above. Leave out miri, fuzzing, benchmarks,
 coverage, scheduled or nightly checks, tests for zigbuild targets,
-and release dry runs in the merge queue.
+release dry runs in the merge queue, and install instructions
+longer than the one command.
 </not_included>
 
 <deliverables>
@@ -396,7 +409,8 @@ Produce them in this order:
    only, test, cache warm, or release.
 5. The list of targets that are built but never tested.
 6. The URL of the first release run on main and the tags it
-   created.
+   created, and the one-line install command for each component
+   that ships a binary.
 7. One sentence confirming the one-time hakari setup
    (cargo hakari init, manage-deps, generate) is committed
    before this workflow is enabled.
