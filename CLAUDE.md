@@ -53,7 +53,10 @@ each rule to every recipe, not only the one you are editing.
 - Open `<hard_rules>` with a scope sentence: "Apply every rule to every
   <unit>, not only the first one." Current models follow instructions
   literally [A3].
-- Open `<deliverables>` with a stopping condition: "Done when ..." [A2].
+- Open `<deliverables>` with a stopping condition: "Done when ...",
+  then "Keep working until then." [A2].
+- Model a new prompt on the closest existing recipe and the Voice
+  section of the skill's writing rules.
 - Add a `<verification>` section to any recipe that produces code or
   config. It requires running real checks and reporting actual output [A2].
 - Use 3 to 5 `<example>` blocks when the output format is the main risk

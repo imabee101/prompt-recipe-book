@@ -91,6 +91,24 @@ rows). Each wording below made a session stop or ask.
     and passes after, every existing test kept, a failed check fixed in
     the work and kept as written.
 
+## Voice
+
+Model a new prompt on the closest existing recipe. `rust-ci-green` and
+`security-audit-remediation` show the current voice best.
+
+- Short, plain sentences, wrapped at about 68 columns inside the block.
+- Task: imperative sentences, ending "Then produce the deliverables
+  listed at the end."
+- Goal: the outcome, then "Reason:" in one sentence; then the second
+  paragraph described under Skeleton.
+- Hard rule: one or two imperative sentences, then "Reason:" with one
+  sentence naming what the rule protects, often as a consequence
+  ("removing one closes nothing").
+- Verification ends with three sentences: include the actual output;
+  count a check as passed only after running it; when a check fails,
+  fix the work and keep the check as written.
+- Deliverables open "Done when ... Keep working until then."
+
 ## Revising a recipe
 
 - Change words inside existing rules before adding a rule. Every added
