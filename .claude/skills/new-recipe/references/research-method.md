@@ -47,6 +47,10 @@ Tiers:
 Note limits next to the tier: a different product version (the GitHub skip
 page was Enterprise Server 3.5), a mirror, or a third-party blog.
 
+What a real session did with the prompt is evidence too. Log it with
+source "none (user report)" or "none (session report)" and tier n/a, and
+state what the session did and which wording caused it.
+
 ## 4. Log
 
 One row per claim in `research/<slug>-log.md`: claim, verdict, source ID,

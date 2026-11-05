@@ -13,6 +13,8 @@ behind each one. Research comes first, writing second.
   - Numbered hard rules: `awk '/^<hard_rules>/{on=1;next} /^<\/hard_rules>/{on=0} on' recipes/<slug>.md | grep -cE '^[0-9]+\. '`
   - Reasons in hard_rules (must equal the rule count): the same `awk` command ending in `grep -c 'Reason'`
   - Examples: `grep -c '^<example>' recipes/<slug>.md`
+  - Ask or stop wording in the prompt (rewrite each hit; quoted example
+    lines are fine): `awk '/^```$/{n++;next} n==1' recipes/<slug>.md | grep -niE 'ask before|stop and|then stop|if you cannot|unresolved'`
 
 ## Layout
 
@@ -20,6 +22,9 @@ behind each one. Research comes first, writing second.
 - `research/<slug>-log.md`: the findings log for that recipe. The `-log`
   suffix is required so a recipe and its log have different names.
 - `templates/`: blank recipe and blank log. Copy them to start a new file.
+- Follow-up recipes run after another one (`rust-ci-green` after the CI
+  recipe, `security-audit-remediation` after `security-defect-audit`).
+  Their title and Usage name the recipe they follow; the prompt does not.
 - `sources.md`: master source list. Source IDs like [A1] and [R3] are
   defined only there.
 - `.claude/skills/new-recipe/SKILL.md`: the research and writing method.
@@ -56,6 +61,15 @@ each rule to every recipe, not only the one you are editing.
 - Write tasks as direct instructions ("Write X"). Skip capitalized
   emphasis. Ask for a short summary instead of written-out reasoning
   [A1] [A2].
+- Keep the session acting: no wording that invites a question, a stop, or
+  a fallback, no situations that may never happen, every deliverable
+  reachable under the hard rules, and a default for every policy choice.
+  Writing rules 13 to 20 in the skill give the reasons [A2].
+- Write each prompt for a session that has never seen another recipe, and
+  keep it transferable to any project.
+- Open the goal's second paragraph with "Carry the work through to the
+  finished deliverables", then the quality bar, then the least-change
+  choice that keeps what the product does.
 - Include only what the requirements state. List extras you considered in
   the closing note and let the user decide [A2].
 - Call a recipe compliant only after the prompt-rule checks under Commands
@@ -73,7 +87,10 @@ each rule to every recipe, not only the one you are editing.
   15 words per source.
 - `rust-ci-github-actions` and `rust-local-check-script` are paired. They
   must have the same stages, flags, regexes, and version minimums. After
-  editing one, compare the other and fix both.
+  editing one, compare the other and fix both. Note the pairing in Usage
+  only; neither prompt mentions the other.
+- Log what real sessions did as user or session report rows (see the
+  skill's research method). Most fixes come from them.
 - Set `status: stale` when the target model or a tool's major version
   changes. Before reusing a recipe last verified more than 90 days ago,
   re-run its research log's claims (repo policy).
@@ -89,6 +106,10 @@ each rule to every recipe, not only the one you are editing.
   note of two or three sentences.
 - Ask before deleting recipes or logs, rewriting git history, or
   force-pushing.
+- Work on `dev`, restarted from the latest `main` once it merges. Commit
+  as the user with no attribution trailer, name no branch after Claude,
+  and merge pull requests with a merge commit.
+- Edit a prompt with the fewest words that fix the problem.
 - Remove temporary files you create before finishing.
 
 ## Gotchas
